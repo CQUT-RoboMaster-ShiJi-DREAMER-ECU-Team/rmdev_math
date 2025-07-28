@@ -14,12 +14,14 @@ module;
 #include "arm_math.h"
 #endif
 
-#include "rmdev/concepts.hpp"
+#include "emdevif/concepts.hpp"
 
 export module rmdev.util.math:trigonometric;
 import :const_value;
 
 export namespace rmdev {
+
+using emdevif::ArithmeticType;
 
 /**
  * 角度转弧度

@@ -10,12 +10,14 @@ module;
 
 #include <cmath>
 
-#include "rmdev/concepts.hpp"
+#include "emdevif/concepts.hpp"
 
 export module rmdev.util.math:basic;
 import :const_value;
 
 export namespace rmdev {
+
+using emdevif::ArithmeticType;
 
 /**
  * 交换两个变量

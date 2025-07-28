@@ -6,7 +6,7 @@ add_subdirectory(matrix)
 
 add_library(${PROJECT_NAME} OBJECT)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC rmdev_core)
+target_link_libraries(${PROJECT_NAME} PUBLIC emdevif_core)
 
 file(GLOB RMDEV_MATH_IMPL_MODULES "math_impl/*.cppm")
 target_sources(${PROJECT_NAME} PUBLIC

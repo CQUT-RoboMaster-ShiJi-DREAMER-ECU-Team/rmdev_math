@@ -10,11 +10,13 @@ module;
 
 #include <algorithm>
 
-#include "rmdev/concepts.hpp"
+#include "emdevif/concepts.hpp"
 
 export module rmdev.util.math:range;
 
 export namespace rmdev {
+
+using emdevif::ArithmeticType;
 
 /**
  * 限制值在给定范围内
