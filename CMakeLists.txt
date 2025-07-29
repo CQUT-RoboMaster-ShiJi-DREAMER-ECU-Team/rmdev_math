@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.28)
 project(rmdev_math CXX)
 
 option(RMDEV_MATH_USE_CMSIS_DSP "Will link CMSIS-DSP to rmdev_math" ON)
-option(RMDEV_MATH_CMSIS_DSP_USE_STM32CUBEMX "Will use stm32cubemx generated CMSIS-DSP lib" ON)
 
 add_library(${PROJECT_NAME} OBJECT)
 
@@ -16,11 +15,9 @@ target_sources(${PROJECT_NAME} PUBLIC
         ${RMDEV_MATH_IMPL_MODULES}
 )
 
-include("cmake/config_use_cmsis_dsp.cmake")
-
 if (RMDEV_MATH_USE_CMSIS_DSP)
     enable_language(C)
-    linkCmsisDsp(${PROJECT_NAME} RMDEV_MATH_CMSIS_DSP_USE_STM32CUBEMX)
+    target_link_libraries(${PROJECT_NAME} PUBLIC rmdev_cmsis_dsp_support)
     target_compile_definitions(${PROJECT_NAME} PUBLIC RMDEV_USE_CMSIS_DSP=1)
 endif ()
 
