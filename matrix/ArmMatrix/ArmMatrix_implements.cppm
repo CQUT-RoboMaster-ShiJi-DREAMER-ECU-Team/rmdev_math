@@ -14,7 +14,7 @@ module;
 
 #include "arm_math.h"
 
-#include "rmdev/concepts.hpp"
+#include "emdevif/concepts.hpp"
 
 export module rmdev.util.ArmMatrix:implements;
 import :traits;
@@ -24,6 +24,10 @@ import rmdev.util.MatrixType;
 import rmdev.util.math;
 
 export namespace rmdev {
+
+using emdevif::ArithmeticType;
+using emdevif::MatrixCouldMultiplied;
+using emdevif::SquareMatrix;
 
 template<typename Type, std::size_t row, std::size_t col>
     requires ArithmeticType<Type>

@@ -14,7 +14,7 @@ module;
 
 #include "arm_math.h"
 
-#include "rmdev/concepts.hpp"
+#include "emdevif/concepts.hpp"
 
 export module rmdev.util.ArmMatrix:interface;
 import :traits;
@@ -22,6 +22,10 @@ import :traits;
 import rmdev.util.MatrixType;
 
 namespace rmdev {
+
+using emdevif::ArithmeticType;
+using emdevif::MatrixCouldMultiplied;
+using emdevif::SquareMatrix;
 
 /**
  * ArmMatrix 矩阵类，用于封装 CMSIS-DSP 的矩阵操作。

@@ -21,7 +21,7 @@ export import rmdev.util.ArmMatrix;
 export namespace rmdev {
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 using Matrix = rmdev::ArmMatrix<Type, row, col>;
 
 }  // namespace rmdev
