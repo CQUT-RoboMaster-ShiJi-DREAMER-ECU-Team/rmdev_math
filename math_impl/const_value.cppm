@@ -8,6 +8,8 @@
 
 module;
 
+#include <numbers>
+
 #ifndef RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE
 
 /// 默认的浮点数等于比较误差值（当两个浮点数的绝对值之差小于这个值时，认为二者相等）
@@ -19,23 +21,27 @@ module;
 
 export module rmdev.util.math:const_value;
 
-export namespace rmdev {
+export namespace rmdev::num {
+
+namespace internal {
 
 /// rmdev 中，默认的浮点数等于比较误差值
 constexpr auto float_equ_default_error_value = RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE;
 
-constexpr auto CONST_E = 2.71828182845904523536;         ///< e
-constexpr auto CONST_LOG2E = 1.44269504088896340736;     ///< log2(e)
-constexpr auto CONST_LOG10E = 0.434294481903251827651;   ///< log10(e)
-constexpr auto CONST_LN2 = 0.693147180559945309417;      ///< ln(2)
-constexpr auto CONST_LN10 = 2.30258509299404568402;      ///< ln(10)
-constexpr auto CONST_PI = 3.14159265358979323846;        ///< pi
-constexpr auto CONST_PI_2 = 1.57079632679489661923;      ///< pi/2
-constexpr auto CONST_PI_4 = 0.785398163397448309616;     ///< pi/4
-constexpr auto CONST_1_PI = 0.318309886183790671538;     ///< 1/pi
-constexpr auto CONST_2_PI = 0.636619772367581343076;     ///< 2/pi
-constexpr auto CONST_2_SQRTPI = 1.12837916709551257390;  ///< 2/sqrt(pi)
-constexpr auto CONST_SQRT2 = 1.41421356237309504880;     ///< sqrt(2)
-constexpr auto CONST_SQRT1_2 = 0.707106781186547524401;  ///< 1/sqrt(2)
+}  // namespace internal
 
-}  // namespace rmdev
+constexpr auto e = std::numbers::e;                   ///< e
+constexpr auto log2_e = std::numbers::log2e;          ///< log2(e)
+constexpr auto lge = std::numbers::log10e;            ///< log10(e)
+constexpr auto ln2 = std::numbers::ln2;               ///< ln(2)
+constexpr auto ln10 = std::numbers::ln10;             ///< ln(10)
+constexpr auto pi = std::numbers::pi;                 ///< pi
+constexpr auto pi_inv2 = 1.57079632679489661923;      ///< pi/2
+constexpr auto pi_inv4 = 0.785398163397448309616;     ///< pi/4
+constexpr auto invPi = std::numbers::inv_pi;          ///< 1/pi
+constexpr auto invPi_2 = 0.636619772367581343076;     ///< 2/pi
+constexpr auto invSqrtPi_2 = 1.12837916709551257390;  ///< 2/sqrt(pi)
+constexpr auto sqrt2 = std::numbers::sqrt2;           ///< sqrt(2)
+constexpr auto invSqrt2 = 0.707106781186547524401;    ///< 1/sqrt(2)
+
+}  // namespace rmdev::num

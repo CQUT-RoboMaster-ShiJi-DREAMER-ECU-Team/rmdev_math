@@ -32,7 +32,7 @@ using emdevif::ArithmeticType;
 template<ArithmeticType Type>
 constexpr float angleToRad(const Type angle)
 {
-    return angle * Type(CONST_PI) / Type(180);
+    return angle * Type(num::pi) / Type(180);
 }
 
 /**
@@ -44,7 +44,7 @@ constexpr float angleToRad(const Type angle)
 template<ArithmeticType Type>
 constexpr float radToAngle(const Type rad)
 {
-    return rad * Type(180) / Type(CONST_PI);
+    return rad * Type(180) / Type(num::pi);
 }
 
 /**

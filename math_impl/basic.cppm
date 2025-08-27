@@ -108,7 +108,7 @@ template<typename Type>
 constexpr bool weakEqu(const Type a, const Type b)
 {
     if constexpr (std::is_floating_point_v<Type>) {
-        return weakEqu(a, b, Type(float_equ_default_error_value));
+        return weakEqu(a, b, Type(num::internal::float_equ_default_error_value));
     }
 
     return (a == b);
