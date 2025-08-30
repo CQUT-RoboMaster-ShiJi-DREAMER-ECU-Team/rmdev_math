@@ -6,7 +6,10 @@ option(RMDEV_MATH_USE_CMSIS_DSP "Will link CMSIS-DSP to rmdev_math" ON)
 
 add_library(${PROJECT_NAME} OBJECT)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC emdevif_core)
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC emdevif_core
+    PRIVATE emdevif_compile_options
+)
 
 file(GLOB RMDEV_MATH_IMPL_MODULES "math_impl/*.cppm")
 target_sources(${PROJECT_NAME} PUBLIC
