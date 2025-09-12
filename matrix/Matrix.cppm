@@ -10,13 +10,13 @@ module;
 
 #include "emdevif/concepts.hpp"
 
-export module rmdev.util.Matrix;
+export module rmdev.util.matrix;
 
-export import rmdev.util.MatrixType;
+export import rmdev.util.matrixType;
 
 #ifdef RMDEV_USE_CMSIS_DSP
 
-export import rmdev.util.ArmMatrix;
+export import rmdev.util.armMatrix;
 
 export namespace rmdev {
 

@@ -13,7 +13,7 @@ module;
 #include "emdevif/concepts.hpp"
 
 export module rmdev.util.math:basic;
-import :const_value;
+import :constantValue;
 
 export namespace rmdev {
 

@@ -12,7 +12,7 @@ module;
 
 #include "arm_math.h"
 
-export module rmdev.util.ArmMatrix:traits;
+export module rmdev.util.armMatrix:traits;
 
 namespace rmdev {
 

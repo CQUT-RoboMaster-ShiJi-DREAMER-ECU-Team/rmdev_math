@@ -10,7 +10,7 @@ module;
 
 #include <cstdint>
 
-export module rmdev.util.MatrixType;
+export module rmdev.util.matrixType;
 
 export namespace rmdev {
 

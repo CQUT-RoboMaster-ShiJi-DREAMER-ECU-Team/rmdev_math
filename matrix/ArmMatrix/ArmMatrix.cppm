@@ -8,7 +8,7 @@
 
 module;
 
-export module rmdev.util.ArmMatrix;
+export module rmdev.util.armMatrix;
 
 export import :traits;
 export import :interface;

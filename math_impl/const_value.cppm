@@ -19,7 +19,7 @@ module;
 
 #endif
 
-export module rmdev.util.math:const_value;
+export module rmdev.util.math:constantValue;
 
 export namespace rmdev::num {
 

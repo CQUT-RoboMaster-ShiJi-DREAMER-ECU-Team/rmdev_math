@@ -16,10 +16,10 @@ module;
 
 #include "emdevif/concepts.hpp"
 
-export module rmdev.util.ArmMatrix:interface;
+export module rmdev.util.armMatrix:interface;
 import :traits;
 
-import rmdev.util.MatrixType;
+import rmdev.util.matrixType;
 
 namespace rmdev {
 

@@ -10,7 +10,7 @@ module;
 
 export module rmdev.util.math;
 export import :basic;
-export import :const_value;
+export import :constantValue;
 export import :trigonometric;
 export import :range;
 export import :decimal;
