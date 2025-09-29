@@ -11,12 +11,14 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE emdevif_compile_options
 )
 
-file(GLOB RMDEV_MATH_IMPL_MODULES "math_impl/*.cppm")
-target_sources(${PROJECT_NAME} PUBLIC
-    FILE_SET rmdev_math_modules TYPE CXX_MODULES FILES
-        math.cppm
-        ${RMDEV_MATH_IMPL_MODULES}
-)
+block()
+    file(GLOB rmdevMathImplModules "math_impl/*.cppm")
+    target_sources(${PROJECT_NAME} PUBLIC
+        FILE_SET rmdev_math_modules TYPE CXX_MODULES FILES
+            math.cppm
+            ${rmdevMathImplModules}
+    )
+endblock()
 
 if (RMDEV_MATH_USE_CMSIS_DSP)
     enable_language(C)
