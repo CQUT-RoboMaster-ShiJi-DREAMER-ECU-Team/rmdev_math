@@ -22,7 +22,7 @@ endblock()
 
 if (RMDEV_MATH_USE_CMSIS_DSP)
     enable_language(C)
-    target_link_libraries(${PROJECT_NAME} PUBLIC rmdev_cmsis_dsp_support)
+    target_link_libraries(${PROJECT_NAME} PUBLIC CMSISDSP)
     target_compile_definitions(${PROJECT_NAME} PUBLIC RMDEV_USE_CMSIS_DSP=1)
 endif ()
 
