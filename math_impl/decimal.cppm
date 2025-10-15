@@ -10,7 +10,7 @@ module;
 
 #include <cstddef>
 
-export module rmdev.util.math:decimal;
+export module rmdev.math:decimal;
 
 export namespace rmdev {
 

@@ -19,7 +19,7 @@ module;
 
 #include "emdevif/concepts.hpp"
 
-export module rmdev.util.math:trigonometric;
+export module rmdev.math:trigonometric;
 import :constantValue;
 
 export namespace rmdev {

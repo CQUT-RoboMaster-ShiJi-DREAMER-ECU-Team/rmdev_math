@@ -12,7 +12,7 @@ module;
 
 #include "emdevif/concepts.hpp"
 
-export module rmdev.util.math:range;
+export module rmdev.math:range;
 
 export namespace rmdev {
 

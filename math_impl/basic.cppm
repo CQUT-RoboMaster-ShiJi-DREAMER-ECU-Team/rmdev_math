@@ -12,7 +12,7 @@ module;
 
 #include "emdevif/concepts.hpp"
 
-export module rmdev.util.math:basic;
+export module rmdev.math:basic;
 import :constantValue;
 
 export namespace rmdev {

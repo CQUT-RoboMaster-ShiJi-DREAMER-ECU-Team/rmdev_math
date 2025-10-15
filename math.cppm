@@ -8,7 +8,7 @@
 
 module;
 
-export module rmdev.util.math;
+export module rmdev.math;
 export import :basic;
 export import :constantValue;
 export import :trigonometric;
