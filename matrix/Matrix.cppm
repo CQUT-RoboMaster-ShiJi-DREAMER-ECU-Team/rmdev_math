@@ -1,6 +1,5 @@
 /**
  * @file Matrix.cppm
- * @module rmdev.util.Matrix
  * @author 杜以成
  * @date 2025-06-02
  * @brief 矩阵运算

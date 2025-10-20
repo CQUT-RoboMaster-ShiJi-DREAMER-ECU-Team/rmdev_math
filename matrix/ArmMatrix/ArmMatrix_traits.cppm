@@ -1,6 +1,5 @@
 /**
  * @file ArmMatrix_traits.cppm
- * @module rmdev.util.ArmMatrix:traits
  * @author 杜以成
  * @date 2025-06-13
  * @brief 类型特征

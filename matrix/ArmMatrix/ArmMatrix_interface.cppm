@@ -1,6 +1,5 @@
 /**
  * @file ArmMatrix_interface.cppm
- * @module rmdev.util.ArmMatrix:interface
  * @author 杜以成
  * @date 2025-06-03
  * @brief CMSIS-DSP 矩阵运算封装接口

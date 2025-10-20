@@ -1,6 +1,5 @@
 /**
  * @file MatrixType.cppm
- * @module rmdev.util.MatrixType
  * @author 杜以成
  * @date 2025-06-12
  * @brief 特殊矩阵类型

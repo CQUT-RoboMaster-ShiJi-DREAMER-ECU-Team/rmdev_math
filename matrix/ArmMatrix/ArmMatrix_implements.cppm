@@ -1,6 +1,5 @@
 /**
  * @file ArmMatrix_implements.cppm
- * @module rmdev.util.ArmMatrix:implements
  * @author 杜以成
  * @date 2025-06-12
  * @brief CMSIS-DSP 矩阵运算封装 - 实现
