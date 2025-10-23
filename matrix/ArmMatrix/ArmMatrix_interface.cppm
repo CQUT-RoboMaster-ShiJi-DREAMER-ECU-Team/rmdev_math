@@ -13,18 +13,13 @@ module;
 
 #include "arm_math.h"
 
-#include "emdevif/concepts.hpp"
-
 export module rmdev.armMatrix:interface;
 import :traits;
 
-import rmdev.matrixType;
+export import rmdev.matrixBase;
+import emdevif.concepts;
 
 namespace rmdev {
-
-using emdevif::ArithmeticType;
-using emdevif::MatrixCouldMultiplied;
-using emdevif::SquareMatrix;
 
 /**
  * ArmMatrix 矩阵类，用于封装 CMSIS-DSP 的矩阵操作。
@@ -33,7 +28,7 @@ using emdevif::SquareMatrix;
  * @tparam col 列数
  */
 export template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 class ArmMatrix
 {
 public:
@@ -60,7 +55,7 @@ public:
      * 构造特殊矩阵
      * @param type 特殊矩阵类型
      */
-    explicit constexpr ArmMatrix(MatrixType type);
+    explicit constexpr ArmMatrix(MatrixBase type);
 
     /**
      * 通过一维数组构造矩阵
@@ -291,75 +286,77 @@ public:
     constexpr bool notequ(std::initializer_list<std::initializer_list<Type>> mat_data, Type error) const;
 
     template<typename Type_, std::size_t row_, std::size_t col_>
-        requires ArithmeticType<Type_>
+        requires emdevif::ArithmeticType<Type_>
     friend ArmMatrix<Type_, row_, col_>& add(ArmMatrix<Type_, row_, col_>& result,
                                              const ArmMatrix<Type_, row_, col_>& a,
                                              const ArmMatrix<Type_, row_, col_>& b);
 
     template<typename Type_, std::size_t row_, std::size_t col_>
-        requires ArithmeticType<Type_>
+        requires emdevif::ArithmeticType<Type_>
     friend ArmMatrix<Type_, row_, col_>& sub(ArmMatrix<Type_, row_, col_>& result,
                                              const ArmMatrix<Type_, row_, col_>& a,
                                              const ArmMatrix<Type_, row_, col_>& b);
 
     template<typename Type_, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
-        requires ArithmeticType<Type_> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
+        requires emdevif::ArithmeticType<Type_> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
     friend ArmMatrix<Type_, rowa, colb>& mul(ArmMatrix<Type_, rowa, colb>& result,
                                              const ArmMatrix<Type_, rowa, cola>& a,
                                              const ArmMatrix<Type_, rowb, colb>& b);
 
     template<typename Type_, std::size_t row_, std::size_t col_>
-        requires ArithmeticType<Type_>
+        requires emdevif::ArithmeticType<Type_>
     friend ArmMatrix<Type_, row_, col_>& mul(ArmMatrix<Type_, row_, col_>& result,
                                              const ArmMatrix<Type_, row_, col_>& a,
                                              Type_ scalar);
 
     template<typename Type_, std::size_t row_, std::size_t col_>
-        requires ArithmeticType<Type_>
+        requires emdevif::ArithmeticType<Type_>
     friend ArmMatrix<Type_, row_, col_>& mul(ArmMatrix<Type_, row_, col_>& result,
                                              Type_ scalar,
                                              const ArmMatrix<Type_, row_, col_>& a);
 
     template<typename Type_, std::size_t row_, std::size_t col_>
-        requires ArithmeticType<Type_>
+        requires emdevif::ArithmeticType<Type_>
     friend ArmMatrix<Type_, col_, row_>& trans(ArmMatrix<Type_, col_, row_>& result,
                                                const ArmMatrix<Type_, row_, col_>& a);
 
     template<typename Type_, std::size_t row_, std::size_t col_>
-        requires ArithmeticType<Type_> && SquareMatrix<row_, col_>
+        requires emdevif::ArithmeticType<Type_> && SquareMatrix<row_, col_>
     friend ArmMatrix<Type_, row_, col_>* inv(ArmMatrix<Type_, row_, col_>& result, ArmMatrix<Type_, row_, col_>& a);
 
     template<typename Type_, std::size_t row_, std::size_t col_>
-        requires ArithmeticType<Type_> && SquareMatrix<row_, col_>
+        requires emdevif::ArithmeticType<Type_> && SquareMatrix<row_, col_>
     friend ArmMatrix<Type_, row_, col_>* invKeep(ArmMatrix<Type_, row_, col_>& result,
                                                  const ArmMatrix<Type_, row_, col_>& a);
 
     template<typename Type_, std::size_t row_, std::size_t col_>
-        requires ArithmeticType<Type_>
+        requires emdevif::ArithmeticType<Type_>
     friend ArmMatrix<Type_, row_, col_>* div(ArmMatrix<Type_, row_, col_>& result,
                                              const ArmMatrix<Type_, row_, col_>& a,
                                              Type_ scalar);
 
     template<typename Type_, std::size_t row_, std::size_t col_>
-        requires ArithmeticType<Type_> && SquareMatrix<row_, col_>
+        requires emdevif::ArithmeticType<Type_> && SquareMatrix<row_, col_>
     friend ArmMatrix<Type_, row_, col_>* div(ArmMatrix<Type_, row_, col_>& result,
                                              Type_ scalar,
                                              ArmMatrix<Type_, row_, col_>& a);
 
     template<typename Type_, std::size_t row_, std::size_t col_>
-        requires ArithmeticType<Type_> && SquareMatrix<row_, col_>
+        requires emdevif::ArithmeticType<Type_> && SquareMatrix<row_, col_>
     friend ArmMatrix<Type_, row_, col_>* divKeep(ArmMatrix<Type_, row_, col_>& result,
                                                  Type_ scalar,
                                                  const ArmMatrix<Type_, row_, col_>& a);
 
     template<typename Type_, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
-        requires ArithmeticType<Type_> && SquareMatrix<rowb, colb> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
+        requires emdevif::ArithmeticType<Type_> && SquareMatrix<rowb, colb> &&
+                 MatrixCouldMultiplied<rowa, cola, rowb, colb>
     friend ArmMatrix<Type_, rowa, colb>* div(ArmMatrix<Type_, rowa, colb>& result,
                                              const ArmMatrix<Type_, rowa, cola>& a,
                                              ArmMatrix<Type_, rowb, colb>& b);
 
     template<typename Type_, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
-        requires ArithmeticType<Type_> && SquareMatrix<rowb, colb> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
+        requires emdevif::ArithmeticType<Type_> && SquareMatrix<rowb, colb> &&
+                 MatrixCouldMultiplied<rowa, cola, rowb, colb>
     friend ArmMatrix<Type_, rowa, colb>* divKeep(ArmMatrix<Type_, rowa, colb>& result,
                                                  const ArmMatrix<Type_, rowa, cola>& a,
                                                  const ArmMatrix<Type_, rowb, colb>& b);

@@ -13,30 +13,25 @@ module;
 
 #include "arm_math.h"
 
-#include "emdevif/concepts.hpp"
-
 export module rmdev.armMatrix:implements;
 import :traits;
 import :interface;
 
-import rmdev.matrixType;
+import emdevif.concepts;
+import rmdev.matrixBase;
 import rmdev.math;
 
 export namespace rmdev {
 
-using emdevif::ArithmeticType;
-using emdevif::MatrixCouldMultiplied;
-using emdevif::SquareMatrix;
-
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr ArmMatrix<Type, row, col>::ArmMatrix()
 {
     ArmMatrixTraits<Type>::init(&matrix, row, col, this->data.data());
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr ArmMatrix<Type, row, col>::ArmMatrix(const ArmMatrix& other)
 {
     this->data = other.data;
@@ -45,22 +40,22 @@ constexpr ArmMatrix<Type, row, col>::ArmMatrix(const ArmMatrix& other)
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
-constexpr ArmMatrix<Type, row, col>::ArmMatrix(const MatrixType type)
+    requires emdevif::ArithmeticType<Type>
+constexpr ArmMatrix<Type, row, col>::ArmMatrix(const MatrixBase type)
 {
     if constexpr (row == col) {
         switch (type) {
-        case MatrixType::Normal:
-        case MatrixType::Zero:
+        case MatrixBase::Normal:
+        case MatrixBase::Zero:
             break;
 
-        case MatrixType::E:
+        case MatrixBase::E:
             for (std::size_t i = 0, j = 0; i < row && j < col; i++, j++) {
                 this->data[i * col + j] = static_cast<Type>(1);
             }
             break;
 
-        case MatrixType::One:
+        case MatrixBase::One:
             this->data.fill(static_cast<Type>(1));
             break;
 
@@ -70,12 +65,12 @@ constexpr ArmMatrix<Type, row, col>::ArmMatrix(const MatrixType type)
     }
     else {
         switch (type) {
-        case MatrixType::Normal:
-        case MatrixType::Zero:
-        case MatrixType::E:
+        case MatrixBase::Normal:
+        case MatrixBase::Zero:
+        case MatrixBase::E:
             break;
 
-        case MatrixType::One:
+        case MatrixBase::One:
             this->data.fill(static_cast<Type>(1));
             break;
 
@@ -88,7 +83,7 @@ constexpr ArmMatrix<Type, row, col>::ArmMatrix(const MatrixType type)
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr ArmMatrix<Type, row, col>::ArmMatrix(const Type mat_data[row * col])
 {
     std::copy(mat_data, mat_data + row * col, this->data.data());
@@ -96,7 +91,7 @@ constexpr ArmMatrix<Type, row, col>::ArmMatrix(const Type mat_data[row * col])
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr ArmMatrix<Type, row, col>::ArmMatrix(const Type mat_data[row][col])
 {
     const Type* p_data = &mat_data[0][0];
@@ -105,7 +100,7 @@ constexpr ArmMatrix<Type, row, col>::ArmMatrix(const Type mat_data[row][col])
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr ArmMatrix<Type, row, col>::ArmMatrix(std::initializer_list<Type> mat_data)
 {
     std::copy(mat_data.begin(), mat_data.end(), this->data.begin());
@@ -113,7 +108,7 @@ constexpr ArmMatrix<Type, row, col>::ArmMatrix(std::initializer_list<Type> mat_d
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr ArmMatrix<Type, row, col>::ArmMatrix(std::initializer_list<std::initializer_list<Type>> mat_data)
 {
     std::size_t i = 0U;
@@ -125,7 +120,7 @@ constexpr ArmMatrix<Type, row, col>::ArmMatrix(std::initializer_list<std::initia
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr Type* ArmMatrix<Type, row, col>::at(const std::size_t r, const std::size_t c)
 {
     if (r < 1U || c < 1U) {
@@ -139,28 +134,28 @@ constexpr Type* ArmMatrix<Type, row, col>::at(const std::size_t r, const std::si
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr const Type* ArmMatrix<Type, row, col>::at(const std::size_t r, const std::size_t c) const
 {
     return const_cast<ArmMatrix*>(this)->at(r, c);
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr Type& ArmMatrix<Type, row, col>::operator()(const std::size_t r, const std::size_t c)
 {
     return data[(r - 1U) * col + (c - 1U)];
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr const Type& ArmMatrix<Type, row, col>::operator()(const std::size_t r, const std::size_t c) const
 {
     return const_cast<ArmMatrix*>(this)->operator()(r, c);
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr Type ArmMatrix<Type, row, col>::det() const
 {
     if constexpr (row != col) {
@@ -173,21 +168,21 @@ constexpr Type ArmMatrix<Type, row, col>::det() const
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr void ArmMatrix<Type, row, col>::fill(Type value)
 {
     data.fill(value);
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr void ArmMatrix<Type, row, col>::clear()
 {
     this->fill(static_cast<Type>(0));
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr ArmMatrix<Type, row, col>& ArmMatrix<Type, row, col>::operator=(const ArmMatrix& other)
 {
     if (this != &other) {
@@ -197,7 +192,7 @@ constexpr ArmMatrix<Type, row, col>& ArmMatrix<Type, row, col>::operator=(const 
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr ArmMatrix<Type, row, col>& ArmMatrix<Type, row, col>::operator=(std::initializer_list<Type> mat_data)
 {
     std::copy(mat_data.begin(), mat_data.end(), this->data.begin());
@@ -205,7 +200,7 @@ constexpr ArmMatrix<Type, row, col>& ArmMatrix<Type, row, col>::operator=(std::i
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr ArmMatrix<Type, row, col>& ArmMatrix<Type, row, col>::operator=(
     std::initializer_list<std::initializer_list<Type>> mat_data)
 {
@@ -219,28 +214,28 @@ constexpr ArmMatrix<Type, row, col>& ArmMatrix<Type, row, col>::operator=(
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::operator==(const ArmMatrix& other) const
 {
     return this->equ(other);
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::operator==(std::initializer_list<Type> mat_data) const
 {
     return this->equ(mat_data);
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::operator==(std::initializer_list<std::initializer_list<Type>> mat_data) const
 {
     return this->equ(mat_data);
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::equ(const ArmMatrix& other) const
 {
     return std::equal(this->data.begin(),
@@ -251,7 +246,7 @@ constexpr bool ArmMatrix<Type, row, col>::equ(const ArmMatrix& other) const
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::equ(std::initializer_list<Type> mat_data) const
 {
     return std::equal(this->data.begin(),
@@ -262,7 +257,7 @@ constexpr bool ArmMatrix<Type, row, col>::equ(std::initializer_list<Type> mat_da
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::equ(std::initializer_list<std::initializer_list<Type>> mat_data) const
 {
     std::size_t i = 0U;
@@ -281,7 +276,7 @@ constexpr bool ArmMatrix<Type, row, col>::equ(std::initializer_list<std::initial
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::equ(const ArmMatrix& other, const Type error) const
 {
     return std::equal(this->data.begin(),
@@ -292,7 +287,7 @@ constexpr bool ArmMatrix<Type, row, col>::equ(const ArmMatrix& other, const Type
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::equ(std::initializer_list<Type> mat_data, const Type error) const
 {
     return std::equal(this->data.begin(),
@@ -303,7 +298,7 @@ constexpr bool ArmMatrix<Type, row, col>::equ(std::initializer_list<Type> mat_da
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::equ(std::initializer_list<std::initializer_list<Type>> mat_data,
                                               const Type error) const
 {
@@ -323,63 +318,63 @@ constexpr bool ArmMatrix<Type, row, col>::equ(std::initializer_list<std::initial
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::operator!=(const ArmMatrix& other) const
 {
     return !(this->operator==(other));
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::operator!=(std::initializer_list<Type> mat_data) const
 {
     return !(this->operator==(mat_data));
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::operator!=(std::initializer_list<std::initializer_list<Type>> mat_data) const
 {
     return !(this->operator==(mat_data));
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::notequ(const ArmMatrix& other) const
 {
     return !equ(other);
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::notequ(std::initializer_list<Type> mat_data) const
 {
     return !(this->equ(mat_data));
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::notequ(std::initializer_list<std::initializer_list<Type>> mat_data) const
 {
     return !(this->equ(mat_data));
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::notequ(const ArmMatrix& other, const Type error) const
 {
     return !equ(other, error);
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::notequ(std::initializer_list<Type> mat_data, const Type error) const
 {
     return !(this->equ(mat_data, error));
 }
 
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool ArmMatrix<Type, row, col>::notequ(std::initializer_list<std::initializer_list<Type>> mat_data,
                                                  const Type error) const
 {
@@ -397,7 +392,7 @@ constexpr bool ArmMatrix<Type, row, col>::notequ(std::initializer_list<std::init
  * @return 计算结果
  */
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, row, col>& add(ArmMatrix<Type, row, col>& result,
                                const ArmMatrix<Type, row, col>& a,
                                const ArmMatrix<Type, row, col>& b)
@@ -418,7 +413,7 @@ ArmMatrix<Type, row, col>& add(ArmMatrix<Type, row, col>& result,
  * @return 计算结果
  */
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, row, col>& sub(ArmMatrix<Type, row, col>& result,
                                const ArmMatrix<Type, row, col>& a,
                                const ArmMatrix<Type, row, col>& b)
@@ -441,7 +436,7 @@ ArmMatrix<Type, row, col>& sub(ArmMatrix<Type, row, col>& result,
  * @return 计算结果
  */
 template<typename Type, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
-    requires ArithmeticType<Type> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
+    requires emdevif::ArithmeticType<Type> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
 ArmMatrix<Type, rowa, colb>& mul(ArmMatrix<Type, rowa, colb>& result,
                                  const ArmMatrix<Type, rowa, cola>& a,
                                  const ArmMatrix<Type, rowb, colb>& b)
@@ -462,7 +457,7 @@ ArmMatrix<Type, rowa, colb>& mul(ArmMatrix<Type, rowa, colb>& result,
  * @return 计算结果
  */
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, row, col>& mul(ArmMatrix<Type, row, col>& result, const ArmMatrix<Type, row, col>& a, const Type scalar)
 {
     ArmMatrixTraits<Type>::scale(&a.matrix, scalar, &result.matrix);
@@ -481,7 +476,7 @@ ArmMatrix<Type, row, col>& mul(ArmMatrix<Type, row, col>& result, const ArmMatri
  * @return 计算结果
  */
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, row, col>& mul(ArmMatrix<Type, row, col>& result, const Type scalar, const ArmMatrix<Type, row, col>& a)
 {
     return mul(result, a, scalar);
@@ -497,7 +492,7 @@ ArmMatrix<Type, row, col>& mul(ArmMatrix<Type, row, col>& result, const Type sca
  * @return 计算结果
  */
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, col, row>& trans(ArmMatrix<Type, col, row>& result, const ArmMatrix<Type, row, col>& a)
 {
     ArmMatrixTraits<Type>::trans(&a.matrix, &result.matrix);
@@ -516,7 +511,7 @@ ArmMatrix<Type, col, row>& trans(ArmMatrix<Type, col, row>& result, const ArmMat
  * @return 计算结果的地址。如果矩阵不可逆，返回 nullptr
  */
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type> && SquareMatrix<row, col>
+    requires emdevif::ArithmeticType<Type> && SquareMatrix<row, col>
 ArmMatrix<Type, row, col>* inv(ArmMatrix<Type, row, col>& result, ArmMatrix<Type, row, col>& a)
 {
     if (ArmMatrixTraits<Type>::inverse(&a.matrix, &result.matrix) == ARM_MATH_SINGULAR) {
@@ -536,7 +531,7 @@ ArmMatrix<Type, row, col>* inv(ArmMatrix<Type, row, col>& result, ArmMatrix<Type
  * @return 计算结果的地址。如果矩阵不可逆，返回 nullptr
  */
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type> && SquareMatrix<row, col>
+    requires emdevif::ArithmeticType<Type> && SquareMatrix<row, col>
 ArmMatrix<Type, row, col>* invKeep(ArmMatrix<Type, row, col>& result, const ArmMatrix<Type, row, col>& a)
 {
     const std::array<Type, row * col> origin_data = a.data;
@@ -561,7 +556,7 @@ ArmMatrix<Type, row, col>* invKeep(ArmMatrix<Type, row, col>& result, const ArmM
  * @return 计算结果的地址。如果除数为零，返回 nullptr
  */
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, row, col>* div(ArmMatrix<Type, row, col>& result, const ArmMatrix<Type, row, col>& a, const Type scalar)
 {
     const Type scalar_inv = static_cast<Type>(1) / scalar;
@@ -587,7 +582,7 @@ ArmMatrix<Type, row, col>* div(ArmMatrix<Type, row, col>& result, const ArmMatri
  * @return 计算结果的地址。如果矩阵不可逆，返回 nullptr
  */
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type> && SquareMatrix<row, col>
+    requires emdevif::ArithmeticType<Type> && SquareMatrix<row, col>
 ArmMatrix<Type, row, col>* div(ArmMatrix<Type, row, col>& result, const Type scalar, ArmMatrix<Type, row, col>& a)
 {
     if (inv(result, a) == nullptr) {
@@ -610,7 +605,7 @@ ArmMatrix<Type, row, col>* div(ArmMatrix<Type, row, col>& result, const Type sca
  * @return 计算结果的地址。如果矩阵不可逆，返回 nullptr
  */
 template<typename Type, std::size_t row, std::size_t col>
-    requires ArithmeticType<Type> && SquareMatrix<row, col>
+    requires emdevif::ArithmeticType<Type> && SquareMatrix<row, col>
 ArmMatrix<Type, row, col>* divKeep(ArmMatrix<Type, row, col>& result,
                                    const Type scalar,
                                    const ArmMatrix<Type, row, col>& a)
@@ -638,7 +633,7 @@ ArmMatrix<Type, row, col>* divKeep(ArmMatrix<Type, row, col>& result,
  * @return 计算结果的地址。如果作为除数的矩阵不可逆，返回 nullptr
  */
 template<typename Type, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
-    requires ArithmeticType<Type> && SquareMatrix<rowb, colb> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
+    requires emdevif::ArithmeticType<Type> && SquareMatrix<rowb, colb> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
 ArmMatrix<Type, rowa, colb>* div(ArmMatrix<Type, rowa, colb>& result,
                                  const ArmMatrix<Type, rowa, cola>& a,
                                  ArmMatrix<Type, rowb, colb>& b)
@@ -665,7 +660,7 @@ ArmMatrix<Type, rowa, colb>* div(ArmMatrix<Type, rowa, colb>& result,
  * @return 计算结果的地址。如果作为除数的矩阵不可逆，返回 nullptr
  */
 template<typename Type, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
-    requires ArithmeticType<Type> && SquareMatrix<rowb, colb> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
+    requires emdevif::ArithmeticType<Type> && SquareMatrix<rowb, colb> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
 ArmMatrix<Type, rowa, colb>* divKeep(ArmMatrix<Type, rowa, colb>& result,
                                      const ArmMatrix<Type, rowa, cola>& a,
                                      const ArmMatrix<Type, rowb, colb>& b)

@@ -7,11 +7,12 @@
 
 module;
 
-#include "emdevif/concepts.hpp"
+#include <cstddef>
 
 export module rmdev.matrix;
 
-export import rmdev.matrixType;
+export import rmdev.matrixBase;
+import emdevif.concepts;
 
 #ifdef RMDEV_USE_CMSIS_DSP
 
