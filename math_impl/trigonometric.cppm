@@ -16,14 +16,12 @@ module;
 #include "arm_math.h"
 #endif
 
-#include "emdevif/concepts.hpp"
-
 export module rmdev.math:trigonometric;
 import :constantValue;
 
-export namespace rmdev {
+import emdevif.concepts;
 
-using emdevif::ArithmeticType;
+export namespace rmdev {
 
 /**
  * 角度转弧度
@@ -31,7 +29,7 @@ using emdevif::ArithmeticType;
  * @param angle: 角度值
  * @return 弧度值
  */
-template<ArithmeticType Type>
+template<emdevif::ArithmeticType Type>
 constexpr float angleToRad(const Type angle)
 {
     return angle * Type(num::pi) / Type(180);
@@ -43,7 +41,7 @@ constexpr float angleToRad(const Type angle)
  * @param rad: 弧度值
  * @return 角度值
  */
-template<ArithmeticType Type>
+template<emdevif::ArithmeticType Type>
 constexpr float radToAngle(const Type rad)
 {
     return rad * Type(180) / Type(num::pi);
@@ -72,7 +70,7 @@ constexpr auto sin_v = sin_constval<x>::value;
  * @param x 弧度
  * @return 计算结果
  */
-template<ArithmeticType Type>
+template<emdevif::ArithmeticType Type>
 Type sin(const Type x)
 {
 #ifdef RMDEV_USE_CMSIS_DSP
@@ -116,7 +114,7 @@ constexpr auto cos_v = cos_constval<x>::value;
  * @param x 弧度
  * @return 计算结果
  */
-template<ArithmeticType Type>
+template<emdevif::ArithmeticType Type>
 Type cos(const Type x)
 {
 #ifdef RMDEV_USE_CMSIS_DSP
@@ -143,7 +141,7 @@ Type cos(const Type x)
  * @param x 弧度制
  * @return 返回一对值，分别为正弦计算结果和余弦计算结果
  */
-template<ArithmeticType Type>
+template<emdevif::ArithmeticType Type>
 auto sin_cos(const Type x)
 {
     std::remove_reference_t<Type> sin_out, cos_out;
@@ -174,7 +172,7 @@ auto sin_cos(const Type x)
  * @param[out] sin_out 正弦计算结果
  * @param[out] cos_out 余弦计算结果
  */
-template<ArithmeticType Type>
+template<emdevif::ArithmeticType Type>
 void sin_cos(const Type x, Type& sin_out, Type& cos_out)
 {
     std::tie(sin_out, cos_out) = sin_cos(x);

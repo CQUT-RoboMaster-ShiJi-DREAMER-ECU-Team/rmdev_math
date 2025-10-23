@@ -32,7 +32,7 @@ endif ()
 target_sources(${PROJECT_NAME} PUBLIC
     FILE_SET rmdev_matrix_modules TYPE CXX_MODULES FILES
         matrix/Matrix.cppm
-        matrix/MatrixType.cppm
+        matrix/MatrixBase.cppm
 )
 
 if (RMDEV_MATH_USE_CMSIS_DSP)

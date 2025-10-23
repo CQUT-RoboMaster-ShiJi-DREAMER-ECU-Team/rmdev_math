@@ -9,10 +9,10 @@ module;
 
 #include <cmath>
 
-#include "emdevif/concepts.hpp"
-
 export module rmdev.math:basic;
 import :constantValue;
+
+import emdevif.concepts;
 
 export namespace rmdev {
 

@@ -9,9 +9,9 @@ module;
 
 #include <algorithm>
 
-#include "emdevif/concepts.hpp"
-
 export module rmdev.math:range;
+
+import emdevif.concepts;
 
 export namespace rmdev {
 
