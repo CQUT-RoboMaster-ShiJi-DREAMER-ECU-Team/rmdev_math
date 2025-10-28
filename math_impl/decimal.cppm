@@ -18,7 +18,7 @@ export namespace rmdev {
  * @param bits: 位数
  * @return 最大值
  */
-constexpr std::size_t bitUintMax(const std::size_t bits)
+constexpr std::size_t bitUintMax(const std::size_t bits) noexcept
 {
     return (1U << bits) - 1U;
 }
@@ -28,7 +28,7 @@ constexpr std::size_t bitUintMax(const std::size_t bits)
  * @param integer: 待计算的十进制整数
  * @return 这个十进制整数的位数
  */
-constexpr std::size_t integerBits(std::size_t integer)
+constexpr std::size_t integerBits(std::size_t integer) noexcept
 {
     std::size_t count = 0U;
 

@@ -30,7 +30,7 @@ export namespace rmdev {
  * @return 弧度值
  */
 template<emdevif::ArithmeticType Type>
-constexpr float angleToRad(const Type angle)
+constexpr float angleToRad(const Type angle) noexcept
 {
     return angle * Type(num::pi) / Type(180);
 }
@@ -42,27 +42,10 @@ constexpr float angleToRad(const Type angle)
  * @return 角度值
  */
 template<emdevif::ArithmeticType Type>
-constexpr float radToAngle(const Type rad)
+constexpr float radToAngle(const Type rad) noexcept
 {
     return rad * Type(180) / Type(num::pi);
 }
-
-/**
- * 编译期计算正弦
- * @tparam x 弧度
- */
-template<auto x>
-struct sin_constval {
-    static_assert(std::is_arithmetic_v<decltype(x)>, "x must be an arithmetic type");
-    static constexpr auto value = std::sin(x);  ///< 计算结果
-};
-
-/**
- * 编译期计算正弦 - 直接获取值的简化版本
- * @tparam x 弧度
- */
-template<auto x>
-constexpr auto sin_v = sin_constval<x>::value;
 
 /**
  * 计算正弦值
@@ -92,30 +75,13 @@ Type sin(const Type x)
 }
 
 /**
- * 编译期计算余弦
- * @tparam x 弧度
- */
-template<auto x>
-struct cos_constval {
-    static_assert(std::is_arithmetic_v<decltype(x)>, "x must be an arithmetic type");
-    static constexpr auto value = std::cos(x);
-};
-
-/**
- * 编译期计算余弦 - 直接获取值的简化版本
- * @tparam x 弧度
- */
-template<auto x>
-constexpr auto cos_v = cos_constval<x>::value;
-
-/**
  * 计算余弦值
  * @tparam Type 数据类型
  * @param x 弧度
  * @return 计算结果
  */
 template<emdevif::ArithmeticType Type>
-Type cos(const Type x)
+Type cos(const Type x) noexcept
 {
 #ifdef RMDEV_USE_CMSIS_DSP
     if constexpr (std::is_same_v<Type, float32_t>) {
@@ -142,7 +108,7 @@ Type cos(const Type x)
  * @return 返回一对值，分别为正弦计算结果和余弦计算结果
  */
 template<emdevif::ArithmeticType Type>
-auto sin_cos(const Type x)
+auto sin_cos(const Type x) noexcept
 {
     std::remove_reference_t<Type> sin_out, cos_out;
 
@@ -173,7 +139,7 @@ auto sin_cos(const Type x)
  * @param[out] cos_out 余弦计算结果
  */
 template<emdevif::ArithmeticType Type>
-void sin_cos(const Type x, Type& sin_out, Type& cos_out)
+void sin_cos(const Type x, Type& sin_out, Type& cos_out) noexcept
 {
     std::tie(sin_out, cos_out) = sin_cos(x);
 }

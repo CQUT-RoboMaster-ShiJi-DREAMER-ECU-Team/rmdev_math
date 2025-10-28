@@ -27,7 +27,7 @@ using emdevif::ArithmeticType;
  */
 template<typename Type>
     requires ArithmeticType<Type>
-constexpr Type limitMinMax(Type& value, const Type min, const Type max)
+constexpr Type limitMinMax(Type& value, const Type min, const Type max) noexcept
 {
     value = std::clamp(value, min, max);
     return value;
@@ -42,7 +42,7 @@ constexpr Type limitMinMax(Type& value, const Type min, const Type max)
  */
 template<typename Type>
     requires ArithmeticType<Type>
-constexpr Type limitInRange(Type& value, Type range)
+constexpr Type limitInRange(Type& value, Type range) noexcept
 {
     value = limitMinMax(value, -range, range);
     return value;

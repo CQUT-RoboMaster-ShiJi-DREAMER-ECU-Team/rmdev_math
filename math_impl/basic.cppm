@@ -26,7 +26,7 @@ using emdevif::ArithmeticType;
  */
 template<typename Type>
     requires ArithmeticType<Type>
-void swap(Type& a, Type& b) noexcept
+constexpr void swap(Type& a, Type& b) noexcept
 {
     Type tmp = a;
     a = b;
@@ -43,7 +43,7 @@ void swap(Type& a, Type& b) noexcept
  */
 template<typename Type>
     requires ArithmeticType<Type>
-constexpr Type sgn(const Type n)
+constexpr Type sgn(const Type n) noexcept
 {
     if (n > 0) {
         return 1;
@@ -62,7 +62,7 @@ constexpr Type sgn(const Type n)
  * @retval -1.0f n 小于零
  */
 template<>
-constexpr float sgn<float>(const float n)
+constexpr float sgn<float>(const float n) noexcept
 {
     return ((n) >= 0.0f ? (1.0f) : (-1.0f));
 }
@@ -74,7 +74,7 @@ constexpr float sgn<float>(const float n)
  * @retval -1.0 n 小于零
  */
 template<>
-constexpr double sgn<double>(const double n)
+constexpr double sgn<double>(const double n) noexcept
 {
     return ((n) >= 0.0 ? (1.0) : (-1.0));
 }
@@ -89,7 +89,7 @@ constexpr double sgn<double>(const double n)
  */
 template<typename Type>
     requires ArithmeticType<Type>
-constexpr bool weakEqu(const Type a, const Type b, Type error)
+constexpr bool weakEqu(const Type a, const Type b, Type error) noexcept
 {
     return std::abs(a - b) <= error;
 }
@@ -104,7 +104,7 @@ constexpr bool weakEqu(const Type a, const Type b, Type error)
  */
 template<typename Type>
     requires ArithmeticType<Type>
-constexpr bool weakEqu(const Type a, const Type b)
+constexpr bool weakEqu(const Type a, const Type b) noexcept
 {
     if constexpr (std::is_floating_point_v<Type>) {
         return weakEqu(a, b, Type(num::internal::float_equ_default_error_value));
