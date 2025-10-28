@@ -4,7 +4,7 @@ project(rmdev_math CXX)
 
 option(RMDEV_MATH_USE_CMSIS_DSP "Will link CMSIS-DSP to rmdev_math" ON)
 
-add_library(${PROJECT_NAME} OBJECT)
+add_library(${PROJECT_NAME} STATIC)
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC emdevif_core
