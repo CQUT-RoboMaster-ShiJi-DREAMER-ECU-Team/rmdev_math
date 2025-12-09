@@ -1,7 +1,5 @@
 /**
  * @file MatrixBase.cppm
- * @author 杜以成
- * @date 2025-06-12
  * @brief 矩阵基本声明
  */
 

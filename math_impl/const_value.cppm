@@ -1,7 +1,5 @@
 /**
  * @file const_value.cppm
- * @author 杜以成
- * @date 2025-06-15
  * @brief 数学常用常量
  */
 

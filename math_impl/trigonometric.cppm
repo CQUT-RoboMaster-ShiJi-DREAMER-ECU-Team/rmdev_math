@@ -1,7 +1,5 @@
 /**
  * @file trigonometric.cppm
- * @author 杜以成
- * @date 2025-06-15
  * @brief 三角学相关函数
  */
 

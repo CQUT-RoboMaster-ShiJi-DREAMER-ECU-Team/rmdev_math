@@ -1,7 +1,5 @@
 /**
  * @file ArmMatrix.cppm
- * @author 杜以成
- * @date 2025-06-13
  * @brief CMSIS-DSP 矩阵封装模块接口单元
  */
 

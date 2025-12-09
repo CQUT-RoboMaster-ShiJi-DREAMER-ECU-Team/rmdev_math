@@ -1,7 +1,5 @@
 /**
  * @file ArmMatrix_traits.cppm
- * @author 杜以成
- * @date 2025-06-13
  * @brief 类型特征
  */
 

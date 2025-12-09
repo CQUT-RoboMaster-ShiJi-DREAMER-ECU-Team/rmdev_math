@@ -1,7 +1,5 @@
 /**
  * @file decimal.cppm
- * @author 杜以成
- * @date 2025-06-15
  * @brief 十进制的计算
  */
 
