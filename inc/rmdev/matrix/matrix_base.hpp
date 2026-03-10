@@ -1,15 +1,18 @@
 /**
- * @file MatrixBase.cppm
+ * @file matrix_base.hpp
  * @brief 矩阵基本声明
  */
 
-module;
+#pragma once
 
-#include <cstdint>
+#include "emdevif/core/detail/config.hpp"
 
-export module rmdev.matrixBase;
+#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
+    #include <cstdint>
+#endif
 
-export namespace rmdev {
+EMDEVIF_MODULE_EXPORT
+namespace rmdev {
 
 /**
  * 特殊矩阵类型

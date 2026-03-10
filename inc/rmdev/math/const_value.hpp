@@ -1,24 +1,25 @@
 /**
- * @file const_value.cppm
+ * @file const_value.hpp
  * @brief 数学常用常量
  */
 
-module;
+#pragma once
 
-#include <numbers>
+#include "emdevif/core/detail/config.hpp"
 
-#ifndef RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE
-
-/// 默认的浮点数等于比较误差值（当两个浮点数的绝对值之差小于这个值时，认为二者相等）
-/// @note 这个值可以通过编译参数定义宏 RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE 来修改。
-///       如果没有定义，则使用默认值 0.001f
-#define RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE 0.001f
-
+#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
+    #include <numbers>
 #endif
 
-export module rmdev.math:constantValue;
+#ifndef RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE
+    /// 默认的浮点数等于比较误差值（当两个浮点数的绝对值之差小于这个值时，认为二者相等）
+    /// @note 这个值可以通过编译参数定义宏 RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE 来修改。
+    ///       如果没有定义，则使用默认值 0.001f
+    #define RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE 0.001f
+#endif
 
-export namespace rmdev::num {
+EMDEVIF_MODULE_EXPORT
+namespace rmdev::num {
 
 namespace internal {
 

@@ -1,15 +1,18 @@
 /**
- * @file decimal.cppm
+ * @file decimal.hpp
  * @brief 十进制的计算
  */
 
-module;
+#pragma once
 
-#include <cstddef>
+#include "emdevif/core/detail/config.hpp"
 
-export module rmdev.math:decimal;
+#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
+    #include <cstddef>
+#endif
 
-export namespace rmdev {
+EMDEVIF_MODULE_EXPORT
+namespace rmdev {
 
 /**
  * 获得给定位数的无符号整型的最大值
@@ -24,7 +27,7 @@ constexpr std::size_t bitUintMax(const std::size_t bits) noexcept
 /**
  * 计算给定十进制整数的位数
  * @param integer: 待计算的十进制整数
- * @return 这个十进制整数的位数
+ * @return 这个十进制整数的十进制位数（例如 123 是 3 位数）
  */
 constexpr std::size_t integerBits(std::size_t integer) noexcept
 {

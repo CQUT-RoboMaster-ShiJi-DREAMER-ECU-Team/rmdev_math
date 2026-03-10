@@ -1,25 +1,28 @@
 /**
- * @file ArmMatrix_implements.cppm
+ * @file ArmMatrix.inl
  * @brief CMSIS-DSP 矩阵运算封装 - 实现
  */
 
-module;
+#pragma once
 
-#include <cstring>
-#include <initializer_list>
-#include <array>
+#include "emdevif/core/detail/config.hpp"
 
-#include "arm_math.h"
+#include "rmdev/matrix/detail/arm_matrix/ArmMatrix.hpp"
+#include "rmdev/matrix/matrix_base.hpp"
 
-export module rmdev.armMatrix:implements;
-import :traits;
-import :interface;
+#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
+    #include <cstring>
+    #include <initializer_list>
+    #include <array>
 
-import emdevif.concepts;
-import rmdev.matrixBase;
-import rmdev.math;
+    #include "arm_math.h"
 
-export namespace rmdev {
+    #include "emdevif/core/concepts.hpp"
+    #include "rmdev/math.hpp"
+#endif
+
+EMDEVIF_MODULE_EXPORT
+namespace rmdev {
 
 template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type>

@@ -1,19 +1,20 @@
 /**
- * @file range.cppm
+ * @file range.hpp
  * @brief 范围相关的
  */
 
-module;
+#pragma once
 
-#include <algorithm>
+#include "emdevif/core/detail/config.hpp"
 
-export module rmdev.math:range;
+#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
+    #include "emdevif/core/concepts.hpp"
 
-import emdevif.concepts;
+    #include <algorithm>
+#endif
 
-export namespace rmdev {
-
-using emdevif::ArithmeticType;
+EMDEVIF_MODULE_EXPORT
+namespace rmdev {
 
 /**
  * 限制值在给定范围内
@@ -24,7 +25,7 @@ using emdevif::ArithmeticType;
  * @return 限制计算完成后的值
  */
 template<typename Type>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr Type limitMinMax(Type& value, const Type min, const Type max) noexcept
 {
     value = std::clamp(value, min, max);
@@ -39,7 +40,7 @@ constexpr Type limitMinMax(Type& value, const Type min, const Type max) noexcept
  * @return 限制计算完成后的值
  */
 template<typename Type>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr Type limitInRange(Type& value, Type range) noexcept
 {
     value = limitMinMax(value, -range, range);

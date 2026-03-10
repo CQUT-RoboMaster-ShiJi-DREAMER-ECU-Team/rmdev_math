@@ -1,21 +1,22 @@
 /**
- * @file ArmMatrix_interface.cppm
+ * @file ArmMatrix.hpp
  * @brief CMSIS-DSP 矩阵运算封装接口
  */
 
-module;
+#pragma once
 
-#include <cstddef>
-#include <initializer_list>
-#include <array>
+#include "emdevif/core/detail/config.hpp"
+#include "rmdev/matrix/detail/arm_matrix/ArmMatrixTraits.hpp"
 
-#include "arm_math.h"
+#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
+    #include <cstddef>
+    #include <initializer_list>
+    #include <array>
 
-export module rmdev.armMatrix:interface;
-import :traits;
+    #include "arm_math.h"
 
-export import rmdev.matrixBase;
-import emdevif.concepts;
+    #include "emdevif/core/concepts.hpp"
+#endif
 
 namespace rmdev {
 
@@ -25,7 +26,7 @@ namespace rmdev {
  * @tparam row 行数
  * @tparam col 列数
  */
-export template<typename Type, std::size_t row, std::size_t col>
+template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type>
 class ArmMatrix
 {
@@ -365,3 +366,5 @@ private:
 };
 
 }  // namespace rmdev
+
+#include "rmdev/matrix/detail/arm_matrix/ArmMatrix.inl"

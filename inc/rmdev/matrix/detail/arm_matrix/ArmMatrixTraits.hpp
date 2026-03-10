@@ -1,15 +1,17 @@
 /**
- * @file ArmMatrix_traits.cppm
+ * @file ArmMatrixTraits.hpp
  * @brief 类型特征
  */
 
-module;
+#pragma once
 
-#include <type_traits>
+#include "emdevif/core/detail/config.hpp"
 
-#include "arm_math.h"
+#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
+    #include <type_traits>
 
-export module rmdev.armMatrix:traits;
+    #include "arm_math.h"
+#endif
 
 namespace rmdev {
 

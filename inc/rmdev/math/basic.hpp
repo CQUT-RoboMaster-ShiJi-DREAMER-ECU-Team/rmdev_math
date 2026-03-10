@@ -1,20 +1,21 @@
 /**
- * @file basic.cppm
+ * @file basic.hpp
  * @brief 基本
  */
 
-module;
+#pragma once
 
-#include <cmath>
+#include "emdevif/core/detail/config.hpp"
+#include "rmdev/math/const_value.hpp"
 
-export module rmdev.math:basic;
-import :constantValue;
+#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
+    #include "emdevif/core/concepts.hpp"
 
-import emdevif.concepts;
+    #include <cmath>
+#endif
 
-export namespace rmdev {
-
-using emdevif::ArithmeticType;
+EMDEVIF_MODULE_EXPORT
+namespace rmdev {
 
 /**
  * 交换两个变量
@@ -23,7 +24,7 @@ using emdevif::ArithmeticType;
  * @param b 第二个变量
  */
 template<typename Type>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr void swap(Type& a, Type& b) noexcept
 {
     Type tmp = a;
@@ -40,7 +41,7 @@ constexpr void swap(Type& a, Type& b) noexcept
  * @retval -1 n 小于零
  */
 template<typename Type>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr Type sgn(const Type n) noexcept
 {
     if (n > 0) {
@@ -86,7 +87,7 @@ constexpr double sgn<double>(const double n) noexcept
  * @return a、b 是否相等
  */
 template<typename Type>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool weakEqu(const Type a, const Type b, Type error) noexcept
 {
     return std::abs(a - b) <= error;
@@ -101,7 +102,7 @@ constexpr bool weakEqu(const Type a, const Type b, Type error) noexcept
  * @return a、b 是否相等
  */
 template<typename Type>
-    requires ArithmeticType<Type>
+    requires emdevif::ArithmeticType<Type>
 constexpr bool weakEqu(const Type a, const Type b) noexcept
 {
     if constexpr (std::is_floating_point_v<Type>) {

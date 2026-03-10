@@ -1,25 +1,28 @@
 /**
- * @file trigonometric.cppm
+ * @file trigonometric.hpp
  * @brief 三角学相关函数
  */
 
-module;
+#pragma once
 
-#include <cmath>
+#include "emdevif/core/detail/config.hpp"
+#include "rmdev/math/const_value.hpp"
 
-#include <utility>
-#include <tuple>
+#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
+    #include <cmath>
 
-#ifdef RMDEV_USE_CMSIS_DSP
-#include "arm_math.h"
+    #include <utility>
+    #include <tuple>
+
+    #ifdef RMDEV_USE_CMSIS_DSP
+        #include "arm_math.h"
+    #endif
+
+    #include "emdevif/core/concepts.hpp"
 #endif
 
-export module rmdev.math:trigonometric;
-import :constantValue;
-
-import emdevif.concepts;
-
-export namespace rmdev {
+EMDEVIF_MODULE_EXPORT
+namespace rmdev {
 
 /**
  * 角度转弧度
@@ -108,7 +111,7 @@ Type cos(const Type x) noexcept
 template<emdevif::ArithmeticType Type>
 auto sin_cos(const Type x) noexcept
 {
-    std::remove_reference_t<Type> sin_out, cos_out;
+    std::remove_cvref_t<Type> sin_out, cos_out;
 
 #ifdef RMDEV_USE_CMSIS_DSP
     if constexpr (std::is_same_v<Type, float32_t>) {
