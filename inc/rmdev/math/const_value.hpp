@@ -21,12 +21,12 @@
 EMDEVIF_MODULE_EXPORT
 namespace rmdev::num {
 
-namespace internal {
+namespace detail {
 
 /// rmdev 中，默认的浮点数等于比较误差值
-constexpr auto float_equ_default_error_value = RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE;
+constexpr auto float_equ_default_error_value = static_cast<double>(RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE);
 
-}  // namespace internal
+}  // namespace detail
 
 constexpr auto e = std::numbers::e;                   ///< e
 constexpr auto log2_e = std::numbers::log2e;          ///< log2(e)

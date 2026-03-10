@@ -18,21 +18,6 @@ EMDEVIF_MODULE_EXPORT
 namespace rmdev {
 
 /**
- * 交换两个变量
- * @tparam Type: 待交换的变量的类型
- * @param a 第一个变量
- * @param b 第二个变量
- */
-template<typename Type>
-    requires emdevif::ArithmeticType<Type>
-constexpr void swap(Type& a, Type& b) noexcept
-{
-    Type tmp = a;
-    a = b;
-    b = tmp;
-}
-
-/**
  * 符号函数
  * @tparam Type: 数字类型（应当为整型数字）
  * @param n: 待判断符号的数字
@@ -106,7 +91,7 @@ template<typename Type>
 constexpr bool weakEqu(const Type a, const Type b) noexcept
 {
     if constexpr (std::is_floating_point_v<Type>) {
-        return weakEqu(a, b, Type(num::internal::float_equ_default_error_value));
+        return weakEqu(a, b, Type(num::detail::float_equ_default_error_value));
     }
 
     return (a == b);
