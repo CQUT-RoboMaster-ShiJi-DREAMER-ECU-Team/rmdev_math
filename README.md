@@ -1,9 +1,17 @@
 # rmdev_math
 
-属于 [rmdev](https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/rmdev.git) 的一个子模块，包含数学运算库。
+`rmdev` 数学工具模块，提供基础数学能力与（可选）CMSIS-DSP 矩阵加速能力。
+
+## 依赖
+
+- `emdevif_core`
+- 可选：`CMSISDSP`
 
 ## 配置
 
-* CMake 变量 `RMDEV_MATH_USE_CMSIS_DSP`: 是否使用 CMSIS-DSP 库。启用了后，依赖 `CMSISDSP`。默认值是 `ON`。
-* 宏 `RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE`: 默认的浮点数等于比较误差值（当两个浮点数的绝对值之差小于这个值时，认为二者相等），默认值是
-  `0.001f`。
+- `RMDEV_MATH_USE_CMSIS_DSP`（默认 `ON`）
+  - `ON`：链接 `CMSISDSP` 并启用相关实现
+  - `OFF`：仅使用纯 C++ 路径
+
+- 宏 `RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE`（默认 `0.001f`）
+  - 浮点“近似相等”判定误差阈值
