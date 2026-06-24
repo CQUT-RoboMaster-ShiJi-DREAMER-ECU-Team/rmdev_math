@@ -5,16 +5,11 @@
 
 #pragma once
 
-#include "emdevif/core/detail/config.hpp"
 #include "rmdev/math/const_value.hpp"
 
-#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
     #include "emdevif/core/concepts.hpp"
 
     #include <cmath>
-#endif
-
-EMDEVIF_MODULE_EXPORT
 namespace rmdev {
 
 /**

@@ -14,16 +14,19 @@ module;
 #include <type_traits>
 
 #include "arm_math.h"
-
-#define EMDEVIF_MODULE_INTERFACE_UNIT
+#include "rmdev/matrix.hpp"
 
 export module rmdev.matrix;
 
-import emdevif.core.concepts;
-import rmdev.math;
+export namespace rmdev {
+    using ::rmdev::MatrixBase;
+    using ::rmdev::MatrixCouldMultiplied;
+    using ::rmdev::SquareMatrix;
+}
 
-#ifdef __clang__
-    #pragma clang diagnostic ignored "-Winclude-angled-in-module-purview"
+#ifdef RMDEV_USE_CMSIS_DSP
+export namespace rmdev {
+    using ::rmdev::ArmMatrix;
+    using ::rmdev::Matrix;
+}
 #endif
-
-#include "rmdev/matrix.hpp"

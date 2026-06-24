@@ -5,13 +5,7 @@
 
 #pragma once
 
-#include "emdevif/core/detail/config.hpp"
-
-#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
     #include <cstddef>
-#endif
-
-EMDEVIF_MODULE_EXPORT
 namespace rmdev {
 
 /**

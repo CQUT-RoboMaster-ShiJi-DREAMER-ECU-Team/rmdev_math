@@ -21,7 +21,6 @@
     #include "rmdev/math.hpp"
 #endif
 
-EMDEVIF_MODULE_EXPORT
 namespace rmdev {
 
 template<typename Type, std::size_t row, std::size_t col>

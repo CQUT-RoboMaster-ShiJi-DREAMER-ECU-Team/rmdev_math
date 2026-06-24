@@ -5,11 +5,7 @@
 
 #pragma once
 
-#include "emdevif/core/detail/config.hpp"
-
-#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
     #include <numbers>
-#endif
 
 #ifndef RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE
     /// 默认的浮点数等于比较误差值（当两个浮点数的绝对值之差小于这个值时，认为二者相等）
@@ -17,8 +13,6 @@
     ///       如果没有定义，则使用默认值 0.001f
     #define RMDEV_FLOAT_EQU_DEFAULT_ERROR_VALUE 0.001f
 #endif
-
-EMDEVIF_MODULE_EXPORT
 namespace rmdev::num {
 
 namespace detail {

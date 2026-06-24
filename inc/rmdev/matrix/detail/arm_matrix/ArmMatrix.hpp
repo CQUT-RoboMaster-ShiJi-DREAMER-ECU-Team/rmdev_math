@@ -5,10 +5,8 @@
 
 #pragma once
 
-#include "emdevif/core/detail/config.hpp"
 #include "rmdev/matrix/detail/arm_matrix/ArmMatrixTraits.hpp"
 
-#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
     #include <cstddef>
     #include <initializer_list>
     #include <array>
@@ -16,7 +14,6 @@
     #include "arm_math.h"
 
     #include "emdevif/core/concepts.hpp"
-#endif
 
 namespace rmdev {
 

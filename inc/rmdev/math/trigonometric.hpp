@@ -5,10 +5,8 @@
 
 #pragma once
 
-#include "emdevif/core/detail/config.hpp"
 #include "rmdev/math/const_value.hpp"
 
-#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
     #include <cmath>
 
     #include <utility>
@@ -19,9 +17,6 @@
     #endif
 
     #include "emdevif/core/concepts.hpp"
-#endif
-
-EMDEVIF_MODULE_EXPORT
 namespace rmdev {
 
 /**
