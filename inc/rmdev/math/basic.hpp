@@ -5,11 +5,11 @@
 
 #pragma once
 
-    #include <cmath>
+#include <cmath>
 
 #include "rmdev/math/const_value.hpp"
 
-    #include "emdevif/core/concepts.hpp"
+#include "emdevif/core/concepts.hpp"
 
 namespace rmdev {
 

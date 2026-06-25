@@ -5,7 +5,7 @@
 
 #pragma once
 
-    #include <cstddef>
+#include <cstddef>
 namespace rmdev {
 
 /**

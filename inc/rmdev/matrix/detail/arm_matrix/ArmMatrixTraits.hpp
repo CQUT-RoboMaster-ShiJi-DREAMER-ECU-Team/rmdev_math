@@ -5,9 +5,9 @@
 
 #pragma once
 
-    #include <type_traits>
+#include <type_traits>
 
-    #include "arm_math.h"
+#include "arm_math.h"
 
 namespace rmdev {
 

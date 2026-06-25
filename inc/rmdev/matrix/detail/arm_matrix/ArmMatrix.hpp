@@ -5,14 +5,14 @@
 
 #pragma once
 
-    #include <cstddef>
+#include <cstddef>
 
-    #include <array>
-    #include <initializer_list>
+#include <array>
+#include <initializer_list>
 
-    #include "arm_math.h"
+#include "arm_math.h"
 
-    #include "emdevif/core/concepts.hpp"
+#include "emdevif/core/concepts.hpp"
 #include "rmdev/matrix/detail/arm_matrix/ArmMatrixTraits.hpp"
 
 namespace rmdev {

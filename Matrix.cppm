@@ -19,14 +19,14 @@ module;
 export module rmdev.matrix;
 
 export namespace rmdev {
-    using ::rmdev::MatrixBase;
-    using ::rmdev::MatrixCouldMultiplied;
-    using ::rmdev::SquareMatrix;
-}
+using ::rmdev::MatrixBase;
+using ::rmdev::MatrixCouldMultiplied;
+using ::rmdev::SquareMatrix;
+}  // namespace rmdev
 
 #ifdef RMDEV_USE_CMSIS_DSP
 export namespace rmdev {
-    using ::rmdev::ArmMatrix;
-    using ::rmdev::Matrix;
-}
+using ::rmdev::ArmMatrix;
+using ::rmdev::Matrix;
+}  // namespace rmdev
 #endif

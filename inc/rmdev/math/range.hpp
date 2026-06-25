@@ -5,9 +5,9 @@
 
 #pragma once
 
-    #include <algorithm>
+#include <algorithm>
 
-    #include "emdevif/core/concepts.hpp"
+#include "emdevif/core/concepts.hpp"
 
 namespace rmdev {
 

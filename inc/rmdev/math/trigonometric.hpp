@@ -5,16 +5,16 @@
 
 #pragma once
 
-    #include <cmath>
+#include <cmath>
 
-    #include <tuple>
-    #include <utility>
+#include <tuple>
+#include <utility>
 
-    #ifdef RMDEV_USE_CMSIS_DSP
-        #include "arm_math.h"
-    #endif
+#ifdef RMDEV_USE_CMSIS_DSP
+#include "arm_math.h"
+#endif
 
-    #include "emdevif/core/concepts.hpp"
+#include "emdevif/core/concepts.hpp"
 #include "rmdev/math/const_value.hpp"
 
 namespace rmdev {
