@@ -10,16 +10,14 @@
 #include "rmdev/matrix/detail/arm_matrix/ArmMatrix.hpp"
 #include "rmdev/matrix/matrix_base.hpp"
 
-#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
-    #include <cstring>
-    #include <initializer_list>
-    #include <array>
+#include <cstring>
+#include <initializer_list>
+#include <array>
 
-    #include "arm_math.h"
+#include "arm_math.h"
 
-    #include "emdevif/core/concepts.hpp"
-    #include "rmdev/math.hpp"
-#endif
+#include "emdevif/core/concepts.hpp"
+#include "rmdev/math.hpp"
 
 namespace rmdev {
 
