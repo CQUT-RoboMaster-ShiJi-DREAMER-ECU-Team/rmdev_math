@@ -5,9 +5,10 @@
 
 #pragma once
 
+    #include <algorithm>
+
     #include "emdevif/core/concepts.hpp"
 
-    #include <algorithm>
 namespace rmdev {
 
 /**
