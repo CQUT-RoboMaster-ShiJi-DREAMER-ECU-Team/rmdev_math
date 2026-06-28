@@ -7,8 +7,8 @@
 
 #include "emdevif/core/detail/config.hpp"
 
-#include "rmdev/matrix/detail/arm_matrix/ArmMatrix.hpp"
-#include "rmdev/matrix/matrix_base.hpp"
+#include "ArmMatrix.hpp"
+#include "ArmMatrixTraits.hpp"
 
 #include <cstring>
 #include <initializer_list>
@@ -160,7 +160,7 @@ constexpr Type ArmMatrix<Type, row, col>::det() const
         return 0;
     }
 
-    Type det;  // todo 待完成行列式计算方法
+    Type det;
 
     return det;
 }
@@ -379,16 +379,6 @@ constexpr bool ArmMatrix<Type, row, col>::notequ(std::initializer_list<std::init
     return !(this->equ(mat_data, error));
 }
 
-/**
- * 矩阵相加
- * @tparam Type 矩阵的数据类型
- * @tparam row 矩阵行数
- * @tparam col 矩阵列数
- * @param[out] result 存储计算结果的矩阵
- * @param a 第一个矩阵
- * @param b 第二个矩阵
- * @return 计算结果
- */
 template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, row, col>& add(ArmMatrix<Type, row, col>& result,
@@ -396,20 +386,9 @@ ArmMatrix<Type, row, col>& add(ArmMatrix<Type, row, col>& result,
                                const ArmMatrix<Type, row, col>& b)
 {
     ArmMatrixTraits<Type>::add(&a.matrix, &b.matrix, &result.matrix);
-
     return result;
 }
 
-/**
- * 矩阵相减
- * @tparam Type 矩阵的数据类型
- * @tparam row 矩阵行数
- * @tparam col 矩阵列数
- * @param[out] result 存储计算结果的矩阵
- * @param a 第一个矩阵
- * @param b 第二个矩阵
- * @return 计算结果
- */
 template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, row, col>& sub(ArmMatrix<Type, row, col>& result,
@@ -417,22 +396,9 @@ ArmMatrix<Type, row, col>& sub(ArmMatrix<Type, row, col>& result,
                                const ArmMatrix<Type, row, col>& b)
 {
     ArmMatrixTraits<Type>::sub(&a.matrix, &b.matrix, &result.matrix);
-
     return result;
 }
 
-/**
- * 矩阵相乘
- * @tparam Type 矩阵的数据类型
- * @tparam rowa 左侧矩阵的行数
- * @tparam cola 左侧矩阵的列数
- * @tparam rowb 右侧矩阵的行数
- * @tparam colb 右侧矩阵的列数
- * @param[out] result 存储计算结果的矩阵
- * @param a 左侧的矩阵
- * @param b 右侧的矩阵
- * @return 计算结果
- */
 template<typename Type, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
     requires emdevif::ArithmeticType<Type> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
 ArmMatrix<Type, rowa, colb>& mul(ArmMatrix<Type, rowa, colb>& result,
@@ -440,39 +406,17 @@ ArmMatrix<Type, rowa, colb>& mul(ArmMatrix<Type, rowa, colb>& result,
                                  const ArmMatrix<Type, rowb, colb>& b)
 {
     ArmMatrixTraits<Type>::mult(&a.matrix, &b.matrix, &result.matrix);
-
     return result;
 }
 
-/**
- * 矩阵数乘
- * @tparam Type 矩阵的数据类型
- * @tparam row 矩阵行数
- * @tparam col 矩阵列数
- * @param[out] result 存储计算结果的矩阵
- * @param a 矩阵
- * @param scalar 乘数
- * @return 计算结果
- */
 template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, row, col>& mul(ArmMatrix<Type, row, col>& result, const ArmMatrix<Type, row, col>& a, const Type scalar)
 {
     ArmMatrixTraits<Type>::scale(&a.matrix, scalar, &result.matrix);
-
     return result;
 }
 
-/**
- * 矩阵数乘
- * @tparam Type 矩阵的数据类型
- * @tparam row 矩阵行数
- * @tparam col 矩阵列数
- * @param[out] result 存储计算结果的矩阵
- * @param scalar 乘数
- * @param a 矩阵
- * @return 计算结果
- */
 template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, row, col>& mul(ArmMatrix<Type, row, col>& result, const Type scalar, const ArmMatrix<Type, row, col>& a)
@@ -480,128 +424,59 @@ ArmMatrix<Type, row, col>& mul(ArmMatrix<Type, row, col>& result, const Type sca
     return mul(result, a, scalar);
 }
 
-/**
- * 矩阵转置
- * @tparam Type 矩阵的数据类型
- * @tparam row 待转置的矩阵行数
- * @tparam col 待转置的矩阵列数
- * @param[out] result 存储计算结果的矩阵
- * @param a 待转置的矩阵
- * @return 计算结果
- */
 template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, col, row>& trans(ArmMatrix<Type, col, row>& result, const ArmMatrix<Type, row, col>& a)
 {
     ArmMatrixTraits<Type>::trans(&a.matrix, &result.matrix);
-
     return result;
 }
 
-/**
- * 求逆矩阵
- * @attention 计算结束后，待求逆的矩阵会变成单位矩阵（原数据会丢失）
- * @tparam Type 矩阵的数据类型
- * @tparam row 待求逆的矩阵行数
- * @tparam col 待求逆的矩阵列数
- * @param[out] result 存储计算结果的矩阵
- * @param a 待求逆的矩阵
- * @return 计算结果的地址。如果矩阵不可逆，返回 nullptr
- */
 template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type> && SquareMatrix<row, col>
 ArmMatrix<Type, row, col>* inv(ArmMatrix<Type, row, col>& result, ArmMatrix<Type, row, col>& a)
 {
     if (ArmMatrixTraits<Type>::inverse(&a.matrix, &result.matrix) == ARM_MATH_SINGULAR) {
-        return nullptr;  // 矩阵不可逆
+        return nullptr;
     }
-
     return &result;
 }
 
-/**
- * 求逆矩阵（待求逆的矩阵的原数据不会丢失，但会多出两次拷贝的开销）
- * @tparam Type 矩阵的数据类型
- * @tparam row 待求逆的矩阵行数
- * @tparam col 待求逆的矩阵列数
- * @param[out] result 存储计算结果的矩阵
- * @param a 待求逆的矩阵
- * @return 计算结果的地址。如果矩阵不可逆，返回 nullptr
- */
 template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type> && SquareMatrix<row, col>
 ArmMatrix<Type, row, col>* invKeep(ArmMatrix<Type, row, col>& result, const ArmMatrix<Type, row, col>& a)
 {
     const std::array<Type, row * col> origin_data = a.data;
-
     if (ArmMatrixTraits<Type>::inverse(&a.matrix, &result.matrix) == ARM_MATH_SINGULAR) {
-        return nullptr;  // 矩阵不可逆
+        return nullptr;
     }
-
     a.data = origin_data;
-
     return &result;
 }
 
-/**
- * 矩阵除以数值
- * @tparam Type 矩阵的数据类型
- * @tparam row 矩阵的行数
- * @tparam col 矩阵的列数
- * @param[out] result 存储计算结果的矩阵
- * @param a 被除的矩阵
- * @param scalar 除数
- * @return 计算结果的地址。如果除数为零，返回 nullptr
- */
 template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type>
 ArmMatrix<Type, row, col>* div(ArmMatrix<Type, row, col>& result, const ArmMatrix<Type, row, col>& a, const Type scalar)
 {
     const Type scalar_inv = static_cast<Type>(1) / scalar;
-
     if (std::isinf(scalar_inv)) {
-        return nullptr;  // 除数为零
+        return nullptr;
     }
-
     ArmMatrixTraits<Type>::scale(&a.matrix, scalar_inv, &result.matrix);
-
     return &result;
 }
 
-/**
- * 数值除以矩阵
- * @attention 计算结束后，这个矩阵会变成单位矩阵（原数据会丢失）
- * @tparam Type 矩阵的数据类型
- * @tparam row 矩阵的行数
- * @tparam col 矩阵的列数
- * @param[out] result 存储计算结果的矩阵
- * @param scalar 被除数
- * @param a 作为除数的矩阵
- * @return 计算结果的地址。如果矩阵不可逆，返回 nullptr
- */
 template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type> && SquareMatrix<row, col>
 ArmMatrix<Type, row, col>* div(ArmMatrix<Type, row, col>& result, const Type scalar, ArmMatrix<Type, row, col>& a)
 {
     if (inv(result, a) == nullptr) {
-        return nullptr;  // 矩阵不可逆
+        return nullptr;
     }
-
     ArmMatrixTraits<Type>::scale(&result.matrix, scalar, &result.matrix);
-
     return &result;
 }
 
-/**
- * 数值除以矩阵（这个矩阵的原数据不会丢失，但会多出两次拷贝的开销）
- * @tparam Type 矩阵的数据类型
- * @tparam row 矩阵的行数
- * @tparam col 矩阵的列数
- * @param[out] result 存储计算结果的矩阵
- * @param scalar 被除数
- * @param a 作为除数的矩阵
- * @return 计算结果的地址。如果矩阵不可逆，返回 nullptr
- */
 template<typename Type, std::size_t row, std::size_t col>
     requires emdevif::ArithmeticType<Type> && SquareMatrix<row, col>
 ArmMatrix<Type, row, col>* divKeep(ArmMatrix<Type, row, col>& result,
@@ -609,27 +484,12 @@ ArmMatrix<Type, row, col>* divKeep(ArmMatrix<Type, row, col>& result,
                                    const ArmMatrix<Type, row, col>& a)
 {
     if (invKeep(result, a) == nullptr) {
-        return nullptr;  // 矩阵不可逆
+        return nullptr;
     }
-
     ArmMatrixTraits<Type>::scale(&result.matrix, scalar, &result.matrix);
-
     return &result;
 }
 
-/**
- * 矩阵除以矩阵
- * @attention 计算结束后，作为除数的矩阵（b）会变成单位矩阵（原数据会丢失）
- * @tparam Type 矩阵的数据类型
- * @tparam rowa 作为被除数的矩阵的行数
- * @tparam cola 作为被除数的矩阵的列数
- * @tparam rowb 作为除数的矩阵的行数
- * @tparam colb 作为除数的矩阵的列数
- * @param[out] result 存储计算结果的矩阵
- * @param a 作为被除数的矩阵
- * @param b 作为除数的矩阵
- * @return 计算结果的地址。如果作为除数的矩阵不可逆，返回 nullptr
- */
 template<typename Type, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
     requires emdevif::ArithmeticType<Type> && SquareMatrix<rowb, colb> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
 ArmMatrix<Type, rowa, colb>* div(ArmMatrix<Type, rowa, colb>& result,
@@ -637,26 +497,12 @@ ArmMatrix<Type, rowa, colb>* div(ArmMatrix<Type, rowa, colb>& result,
                                  ArmMatrix<Type, rowb, colb>& b)
 {
     if (inv(result, b) == nullptr) {
-        return nullptr;  // 矩阵不可逆
+        return nullptr;
     }
-
     ArmMatrixTraits<Type>::mult(&a.matrix, &result.matrix, &result.matrix);
-
     return &result;
 }
 
-/**
- * 矩阵除以矩阵（作为除数的矩阵（b）的原数据不会丢失，但会多出两次拷贝的开销）
- * @tparam Type 矩阵的数据类型
- * @tparam rowa 作为被除数的矩阵的行数
- * @tparam cola 作为被除数的矩阵的列数
- * @tparam rowb 作为除数的矩阵的行数
- * @tparam colb 作为除数的矩阵的列数
- * @param[out] result 存储计算结果的矩阵
- * @param a 作为被除数的矩阵
- * @param b 作为除数的矩阵
- * @return 计算结果的地址。如果作为除数的矩阵不可逆，返回 nullptr
- */
 template<typename Type, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
     requires emdevif::ArithmeticType<Type> && SquareMatrix<rowb, colb> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
 ArmMatrix<Type, rowa, colb>* divKeep(ArmMatrix<Type, rowa, colb>& result,
@@ -664,11 +510,9 @@ ArmMatrix<Type, rowa, colb>* divKeep(ArmMatrix<Type, rowa, colb>& result,
                                      const ArmMatrix<Type, rowb, colb>& b)
 {
     if (invKeep(result, b) == nullptr) {
-        return nullptr;  // 矩阵不可逆
+        return nullptr;
     }
-
     ArmMatrixTraits<Type>::mult(&a.matrix, &result.matrix, &result.matrix);
-
     return &result;
 }
 

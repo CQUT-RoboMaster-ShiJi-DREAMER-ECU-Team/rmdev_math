@@ -7,10 +7,10 @@
 #ifndef RMDEV_MATH_HPP
 #define RMDEV_MATH_HPP
 
-#include "math/const_value.hpp"
-#include "math/basic.hpp"
-#include "math/decimal.hpp"
-#include "math/range.hpp"
-#include "math/trigonometric.hpp"
+#include "rmdev/math/const_value.hpp"
+#include "rmdev/math/basic.hpp"
+#include "rmdev/math/decimal.hpp"
+#include "rmdev/math/range.hpp"
+#include "rmdev/math/trigonometric.hpp"
 
 #endif  // !RMDEV_MATH_HPP

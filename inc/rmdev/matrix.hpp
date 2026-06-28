@@ -9,8 +9,10 @@
 
 #include "rmdev/matrix/matrix_base.hpp"
 
-#ifdef RMDEV_USE_CMSIS_DSP
-#include "matrix/detail/arm_matrix.hpp"
+#ifdef RMDEV_MATRIX_USE_CMSIS_DSP
+
+#include "rmdev/matrix/arm_matrix.hpp"
+
 namespace rmdev {
 
 template<typename Type, std::size_t row, std::size_t col>
@@ -19,6 +21,6 @@ using Matrix = rmdev::ArmMatrix<Type, row, col>;
 
 }  // namespace rmdev
 
-#endif  // RMDEV_USE_CMSIS_DSP
+#endif  // RMDEV_MATRIX_USE_CMSIS_DSP
 
 #endif  // !RMDEV_MATRIX_HPP
