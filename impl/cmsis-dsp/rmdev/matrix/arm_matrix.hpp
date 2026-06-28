@@ -7,4 +7,3 @@
 
 #include "ArmMatrixTraits.hpp"
 #include "ArmMatrix.hpp"
-#include "ArmMatrix.inl"

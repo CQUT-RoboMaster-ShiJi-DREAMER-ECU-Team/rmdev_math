@@ -21,7 +21,7 @@ struct ArmMatrixTraits<float> {
     using DataType = float;
     using ArmMatrixInstance = arm_matrix_instance_f32;
 
-    constexpr static auto init(ArmMatrixInstance* S, const uint16_t nRows, const uint16_t nColumns, DataType* pData)
+    static constexpr void init(ArmMatrixInstance* S, const uint16_t nRows, const uint16_t nColumns, DataType* pData)
     {
         S->numRows = nRows;
         S->numCols = nColumns;
@@ -66,7 +66,7 @@ struct ArmMatrixTraits<double> {
     using DataType = double;
     using ArmMatrixInstance = arm_matrix_instance_f64;
 
-    constexpr static auto init(ArmMatrixInstance* S, const uint16_t nRows, const uint16_t nColumns, DataType* pData)
+    static constexpr void init(ArmMatrixInstance* S, const uint16_t nRows, const uint16_t nColumns, DataType* pData)
     {
         S->numRows = nRows;
         S->numCols = nColumns;

@@ -1,192 +1,299 @@
 /**
  * @file ArmMatrix.hpp
- * @brief CMSIS-DSP 矩阵运算封装接口
+ * @brief CMSIS-DSP 矩阵运算封装
  */
 
 #pragma once
 
 #include <cstddef>
+#include <cstring>
 
-#include <array>
+#include <type_traits>
+#include <algorithm>
 #include <initializer_list>
 
 #include "arm_math.h"
 
-#include "emdevif/core/concepts.hpp"
 #include "rmdev/matrix/matrix_base.hpp"
+#include "rmdev/math.hpp"
 #include "ArmMatrixTraits.hpp"
 
 namespace rmdev {
 
-/**
- * ArmMatrix 矩阵类，用于封装 CMSIS-DSP 的矩阵操作。
- * @tparam Type 数据类型
- * @tparam row 行数
- * @tparam col 列数
- */
 template<typename Type, std::size_t row, std::size_t col>
-    requires emdevif::ArithmeticType<Type>
+    requires std::is_arithmetic_v<Type>
 class ArmMatrix
 {
 public:
-    ArmMatrix& operator+(const ArmMatrix& other) = delete;
-    ArmMatrix& operator-(const ArmMatrix& other) = delete;
-    ArmMatrix& operator*(const ArmMatrix& other) = delete;
-    ArmMatrix& operator/(const ArmMatrix& other) = delete;
+    constexpr ArmMatrix() noexcept
+    {
+        ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
+    }
 
-    ArmMatrix&& trans() = delete;
+    constexpr ArmMatrix(const ArmMatrix& other) noexcept
+    {
+        std::ranges::copy(other.data_, data_);
+        ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
+    }
 
-    constexpr ArmMatrix();
+    explicit constexpr ArmMatrix(const MatrixBase type) noexcept
+    {
+        if constexpr (row == col) {
+            switch (type) {
+            case MatrixBase::E:
+                for (std::size_t i = 0; i < row; ++i) {
+                    data_[i * col + i] = static_cast<Type>(1);
+                }
+                break;
+            case MatrixBase::One:
+                std::ranges::fill(data_, static_cast<Type>(1));
+                break;
+            default:
+                break;
+            }
+        }
+        else {
+            switch (type) {
+            case MatrixBase::One:
+                std::ranges::fill(data_, static_cast<Type>(1));
+                break;
+            default:
+                break;
+            }
+        }
+        ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
+    }
 
-    constexpr ArmMatrix(const ArmMatrix& other);
+    explicit constexpr ArmMatrix(const Type (&mat_data)[row * col]) noexcept
+    {
+        std::ranges::copy(mat_data.data_, data_);
+        ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
+    }
 
-    explicit constexpr ArmMatrix(MatrixBase type);
+    explicit constexpr ArmMatrix(const Type (&mat_data)[row][col]) noexcept
+    {
+        std::ranges::copy(mat_data.data_, data_);
+        ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
+    }
 
-    explicit constexpr ArmMatrix(const Type mat_data[row * col]);
+    constexpr ArmMatrix(std::initializer_list<Type> mat_data) noexcept
+    {
+        std::ranges::copy(mat_data, data_);
+        ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
+    }
 
-    explicit constexpr ArmMatrix(const Type mat_data[row][col]);
+    constexpr ArmMatrix(std::initializer_list<std::initializer_list<Type>> mat_data) noexcept
+    {
+        auto* dst = data_;
+        for (const auto& row_data : mat_data) {
+            dst = std::ranges::copy(row_data, dst).out;
+        }
+        ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
+    }
 
-    constexpr ArmMatrix(std::initializer_list<Type> mat_data);
+    [[nodiscard]] constexpr Type* at(std::size_t r, std::size_t c) noexcept
+    {
+        if (r >= row || c >= col) {
+            return nullptr;
+        }
+        return &data_[r * col + c];
+    }
 
-    constexpr ArmMatrix(std::initializer_list<std::initializer_list<Type>> mat_data);
+    [[nodiscard]] constexpr const Type* at(std::size_t r, std::size_t c) const noexcept
+    {
+        return const_cast<ArmMatrix*>(this)->at(r, c);
+    }
 
-    [[nodiscard]] constexpr Type* at(std::size_t r, std::size_t c);
+    [[nodiscard]] constexpr Type& operator()(std::size_t r, std::size_t c) noexcept
+    {
+        return data_[r * col + c];
+    }
 
-    [[nodiscard]] constexpr const Type* at(std::size_t r, std::size_t c) const;
+    [[nodiscard]] constexpr const Type& operator()(std::size_t r, std::size_t c) const noexcept
+    {
+        return const_cast<ArmMatrix*>(this)->operator()(r, c);
+    }
 
-    [[nodiscard]] constexpr Type& operator()(std::size_t r, std::size_t c);
+    [[nodiscard]] constexpr Type det() const noexcept
+    {
+        if constexpr (row != col) {
+            return Type{0};
+        }
+        else if constexpr (row == 1) {
+            return data_[0];
+        }
+        else if constexpr (row == 2) {
+            return data_[0] * data_[3] - data_[1] * data_[2];
+        }
+        else {
+            // todo
+            return 0;
+        }
+    }
 
-    [[nodiscard]] constexpr const Type& operator()(std::size_t r, std::size_t c) const;
+    constexpr void fill(Type value) noexcept
+    {
+        std::ranges::fill(data_, value);
+    }
 
-    [[nodiscard]] constexpr Type det() const;
+    constexpr void clear() noexcept
+    {
+        std::ranges::fill(data_, Type{});
+    }
 
-    constexpr void fill(Type value);
+    constexpr ArmMatrix& operator=(const ArmMatrix& other) noexcept
+    {
+        if (this != &other) {
+            std::ranges::copy(other.data_, data_);
+        }
+        return *this;
+    }
 
-    constexpr void clear();
+    constexpr ArmMatrix& operator=(std::initializer_list<Type> mat_data) noexcept
+    {
+        std::ranges::copy(mat_data, data_);
+        return *this;
+    }
 
-    constexpr ArmMatrix& operator=(const ArmMatrix& other);
+    constexpr ArmMatrix& operator=(std::initializer_list<std::initializer_list<Type>> mat_data) noexcept
+    {
+        auto* dst = data_;
+        for (const auto& row_data : mat_data) {
+            dst = std::ranges::copy(row_data, dst).out;
+        }
+        return *this;
+    }
 
-    constexpr ArmMatrix& operator=(std::initializer_list<Type> mat_data);
+    [[nodiscard]] constexpr bool operator==(const ArmMatrix& other) const noexcept
+    {
+        return std::ranges::equal(other.data_, data_, [](Type a, Type b) noexcept { return weakEqu(a, b); });
+    }
 
-    constexpr ArmMatrix& operator=(std::initializer_list<std::initializer_list<Type>> mat_data);
+    [[nodiscard]] constexpr bool isApprox(const ArmMatrix& other, Type error) const noexcept
+    {
+        return std::ranges::equal(other.data_, data_, [error](Type a, Type b) noexcept {
+            return weakEqu(a, b, error);
+        });
+    }
 
-    constexpr bool operator==(const ArmMatrix& other) const;
+    ArmMatrix& operator+=(const ArmMatrix& other) noexcept
+    {
+        ArmMatrixTraits<Type>::add(&matrix_, &other.matrix_, &matrix_);
+        return *this;
+    }
 
-    constexpr bool operator==(std::initializer_list<Type> mat_data) const;
+    ArmMatrix& operator-=(const ArmMatrix& other) noexcept
+    {
+        ArmMatrixTraits<Type>::sub(&matrix_, &other.matrix_, &matrix_);
+        return *this;
+    }
 
-    constexpr bool operator==(std::initializer_list<std::initializer_list<Type>> mat_data) const;
+    ArmMatrix& operator*=(Type scalar) noexcept
+    {
+        ArmMatrixTraits<Type>::scale(&matrix_, scalar, &matrix_);
+        return *this;
+    }
 
-    constexpr bool equ(const ArmMatrix& other) const;
+    ArmMatrix& operator*=(const ArmMatrix<Type, col, col>& other) noexcept
+    {
+        ArmMatrix temp;
+        ArmMatrixTraits<Type>::mult(&matrix_, &other.matrix_, &temp.matrix_);
+        std::memcpy(data_, temp.data_, sizeof(data_));
+        return *this;
+    }
 
-    constexpr bool equ(std::initializer_list<Type> mat_data) const;
+    ArmMatrix& operator/=(Type scalar) noexcept
+    {
+        ArmMatrixTraits<Type>::scale(&matrix_, static_cast<Type>(1) / scalar, &matrix_);
+        return *this;
+    }
 
-    constexpr bool equ(std::initializer_list<std::initializer_list<Type>> mat_data) const;
+    ArmMatrix& operator/=(const ArmMatrix<Type, col, col>& other) noexcept
+    {
+        ArmMatrix<Type, col, col> inv_other = other.inverse();
+        ArmMatrix temp;
+        ArmMatrixTraits<Type>::mult(&matrix_, &inv_other.matrix_, &temp.matrix_);
+        std::memcpy(data_, temp.data_, sizeof(data_));
+        return *this;
+    }
 
-    constexpr bool equ(const ArmMatrix& other, Type error) const;
+    [[nodiscard]] ArmMatrix operator+(const ArmMatrix& other) const noexcept
+    {
+        ArmMatrix result;
+        ArmMatrixTraits<Type>::add(&matrix_, &other.matrix_, &result.matrix_);
+        return result;
+    }
 
-    constexpr bool equ(std::initializer_list<Type> mat_data, Type error) const;
+    [[nodiscard]] ArmMatrix operator-(const ArmMatrix& other) const noexcept
+    {
+        ArmMatrix result;
+        ArmMatrixTraits<Type>::sub(&matrix_, &other.matrix_, &result.matrix_);
+        return result;
+    }
 
-    constexpr bool equ(std::initializer_list<std::initializer_list<Type>> mat_data, Type error) const;
+    [[nodiscard]] ArmMatrix operator*(Type scalar) const noexcept
+    {
+        ArmMatrix result;
+        ArmMatrixTraits<Type>::scale(&matrix_, scalar, &result.matrix_);
+        return result;
+    }
 
-    constexpr bool operator!=(const ArmMatrix& other) const;
+    template<std::size_t col2>
+    [[nodiscard]] ArmMatrix<Type, row, col2> operator*(const ArmMatrix<Type, col, col2>& other) const noexcept
+    {
+        ArmMatrix<Type, row, col2> result;
+        ArmMatrixTraits<Type>::mult(&matrix_, &other.matrix_, &result.matrix_);
+        return result;
+    }
 
-    constexpr bool operator!=(std::initializer_list<Type> mat_data) const;
+    [[nodiscard]] ArmMatrix operator/(Type scalar) const noexcept
+    {
+        ArmMatrix result;
+        ArmMatrixTraits<Type>::scale(&matrix_, static_cast<Type>(1) / scalar, &result.matrix_);
+        return result;
+    }
 
-    constexpr bool operator!=(std::initializer_list<std::initializer_list<Type>> mat_data) const;
+    [[nodiscard]] ArmMatrix operator/(const ArmMatrix<Type, col, col>& other) const noexcept
+    {
+        ArmMatrix<Type, col, col> inv_other = other.inverse();
+        ArmMatrix result;
+        ArmMatrixTraits<Type>::mult(&matrix_, &inv_other.matrix_, &result.matrix_);
+        return result;
+    }
 
-    constexpr bool notequ(const ArmMatrix& other) const;
+    [[nodiscard]] friend ArmMatrix operator*(Type scalar, const ArmMatrix& mat) noexcept
+    {
+        ArmMatrix result;
+        ArmMatrixTraits<Type>::scale(&mat.matrix_, scalar, &result.matrix_);
+        return result;
+    }
 
-    constexpr bool notequ(std::initializer_list<Type> mat_data) const;
+    [[nodiscard]] friend ArmMatrix operator/(Type scalar, const ArmMatrix& mat) noexcept
+        requires SquareMatrix<row, col>
+    {
+        ArmMatrix result = mat.inverse();
+        ArmMatrixTraits<Type>::scale(&result.matrix_, scalar, &result.matrix_);
+        return result;
+    }
 
-    constexpr bool notequ(std::initializer_list<std::initializer_list<Type>> mat_data) const;
+    [[nodiscard]] ArmMatrix<Type, col, row> transpose() const noexcept
+    {
+        ArmMatrix<Type, col, row> result;
+        ArmMatrixTraits<Type>::trans(&matrix_, &result.matrix_);
+        return result;
+    }
 
-    constexpr bool notequ(const ArmMatrix& other, Type error) const;
-
-    constexpr bool notequ(std::initializer_list<Type> mat_data, Type error) const;
-
-    constexpr bool notequ(std::initializer_list<std::initializer_list<Type>> mat_data, Type error) const;
-
-    template<typename Type_, std::size_t row_, std::size_t col_>
-        requires emdevif::ArithmeticType<Type_>
-    friend ArmMatrix<Type_, row_, col_>& add(ArmMatrix<Type_, row_, col_>& result,
-                                             const ArmMatrix<Type_, row_, col_>& a,
-                                             const ArmMatrix<Type_, row_, col_>& b);
-
-    template<typename Type_, std::size_t row_, std::size_t col_>
-        requires emdevif::ArithmeticType<Type_>
-    friend ArmMatrix<Type_, row_, col_>& sub(ArmMatrix<Type_, row_, col_>& result,
-                                             const ArmMatrix<Type_, row_, col_>& a,
-                                             const ArmMatrix<Type_, row_, col_>& b);
-
-    template<typename Type_, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
-        requires emdevif::ArithmeticType<Type_> && MatrixCouldMultiplied<rowa, cola, rowb, colb>
-    friend ArmMatrix<Type_, rowa, colb>& mul(ArmMatrix<Type_, rowa, colb>& result,
-                                             const ArmMatrix<Type_, rowa, cola>& a,
-                                             const ArmMatrix<Type_, rowb, colb>& b);
-
-    template<typename Type_, std::size_t row_, std::size_t col_>
-        requires emdevif::ArithmeticType<Type_>
-    friend ArmMatrix<Type_, row_, col_>& mul(ArmMatrix<Type_, row_, col_>& result,
-                                             const ArmMatrix<Type_, row_, col_>& a,
-                                             Type_ scalar);
-
-    template<typename Type_, std::size_t row_, std::size_t col_>
-        requires emdevif::ArithmeticType<Type_>
-    friend ArmMatrix<Type_, row_, col_>& mul(ArmMatrix<Type_, row_, col_>& result,
-                                             Type_ scalar,
-                                             const ArmMatrix<Type_, row_, col_>& a);
-
-    template<typename Type_, std::size_t row_, std::size_t col_>
-        requires emdevif::ArithmeticType<Type_>
-    friend ArmMatrix<Type_, col_, row_>& trans(ArmMatrix<Type_, col_, row_>& result,
-                                               const ArmMatrix<Type_, row_, col_>& a);
-
-    template<typename Type_, std::size_t row_, std::size_t col_>
-        requires emdevif::ArithmeticType<Type_> && SquareMatrix<row_, col_>
-    friend ArmMatrix<Type_, row_, col_>* inv(ArmMatrix<Type_, row_, col_>& result, ArmMatrix<Type_, row_, col_>& a);
-
-    template<typename Type_, std::size_t row_, std::size_t col_>
-        requires emdevif::ArithmeticType<Type_> && SquareMatrix<row_, col_>
-    friend ArmMatrix<Type_, row_, col_>* invKeep(ArmMatrix<Type_, row_, col_>& result,
-                                                 const ArmMatrix<Type_, row_, col_>& a);
-
-    template<typename Type_, std::size_t row_, std::size_t col_>
-        requires emdevif::ArithmeticType<Type_>
-    friend ArmMatrix<Type_, row_, col_>* div(ArmMatrix<Type_, row_, col_>& result,
-                                             const ArmMatrix<Type_, row_, col_>& a,
-                                             Type_ scalar);
-
-    template<typename Type_, std::size_t row_, std::size_t col_>
-        requires emdevif::ArithmeticType<Type_> && SquareMatrix<row_, col_>
-    friend ArmMatrix<Type_, row_, col_>* div(ArmMatrix<Type_, row_, col_>& result,
-                                             Type_ scalar,
-                                             ArmMatrix<Type_, row_, col_>& a);
-
-    template<typename Type_, std::size_t row_, std::size_t col_>
-        requires emdevif::ArithmeticType<Type_> && SquareMatrix<row_, col_>
-    friend ArmMatrix<Type_, row_, col_>* divKeep(ArmMatrix<Type_, row_, col_>& result,
-                                                 Type_ scalar,
-                                                 const ArmMatrix<Type_, row_, col_>& a);
-
-    template<typename Type_, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
-        requires emdevif::ArithmeticType<Type_> && SquareMatrix<rowb, colb> &&
-                 MatrixCouldMultiplied<rowa, cola, rowb, colb>
-    friend ArmMatrix<Type_, rowa, colb>* div(ArmMatrix<Type_, rowa, colb>& result,
-                                             const ArmMatrix<Type_, rowa, cola>& a,
-                                             ArmMatrix<Type_, rowb, colb>& b);
-
-    template<typename Type_, std::size_t rowa, std::size_t cola, std::size_t rowb, std::size_t colb>
-        requires emdevif::ArithmeticType<Type_> && SquareMatrix<rowb, colb> &&
-                 MatrixCouldMultiplied<rowa, cola, rowb, colb>
-    friend ArmMatrix<Type_, rowa, colb>* divKeep(ArmMatrix<Type_, rowa, colb>& result,
-                                                 const ArmMatrix<Type_, rowa, cola>& a,
-                                                 const ArmMatrix<Type_, rowb, colb>& b);
+    [[nodiscard]] ArmMatrix inverse() const noexcept
+        requires SquareMatrix<row, col>
+    {
+        ArmMatrix result;
+        ArmMatrixTraits<Type>::inverse(&matrix_, &result.matrix_);
+        return result;
+    }
 
 private:
-    std::array<Type, row * col> data{};
-    typename ArmMatrixTraits<Type>::ArmMatrixInstance matrix{};
+    alignas(Type) Type data_[row * col]{};
+    typename ArmMatrixTraits<Type>::ArmMatrixInstance matrix_{};
 };
 
 }  // namespace rmdev
-
-#include "ArmMatrix.inl"
