@@ -11,6 +11,7 @@ export module rmdev.matrix;
 
 export namespace rmdev {
 using ::rmdev::SpecialMatrixTag;
+using ::rmdev::calculateGenericMatrixDeterminant;
 using ::rmdev::MatrixCouldMultiplied;
 using ::rmdev::SquareMatrix;
 }  // namespace rmdev

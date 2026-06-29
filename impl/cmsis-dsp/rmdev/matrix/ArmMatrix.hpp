@@ -11,6 +11,7 @@
 #include <type_traits>
 #include <algorithm>
 #include <iterator>
+#include <memory>
 #include <span>
 #include <initializer_list>
 
@@ -134,21 +135,20 @@ public:
         return data_[r * col + c];
     }
 
-    [[nodiscard]] constexpr Type det() const noexcept
+    /**
+     * 计算行列式
+     *
+     * @attention 对于矩阵维数 >= 5 的矩阵，计算行列式时将会使用动态内存分配，请注意传递合适的内存分配器
+     * （默认的 std::allocator 通常不适用于嵌入式开发）；对于维数 <= 4
+     * 的矩阵，不会使用动态内存分配，无需关心内存分配器。
+     * @tparam Allocator 内存分配器类型
+     * @param allocator 分配器
+     * @return 行列式计算结果
+     */
+    template<typename Allocator = std::allocator<Type>>
+    [[nodiscard]] constexpr Type determinant(const Allocator& allocator = Allocator()) const noexcept
     {
-        if constexpr (row != col) {
-            return Type{0};
-        }
-        else if constexpr (row == 1) {
-            return data_[0];
-        }
-        else if constexpr (row == 2) {
-            return data_[0] * data_[3] - data_[1] * data_[2];
-        }
-        else {
-            // todo
-            return 0;
-        }
+        return calculateGenericMatrixDeterminant(std::span{data_, std::size(data_)}, row, col, allocator);
     }
 
     constexpr void fill(Type value) noexcept
