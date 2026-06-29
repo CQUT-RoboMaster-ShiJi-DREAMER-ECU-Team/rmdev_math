@@ -10,6 +10,8 @@
 
 #include <type_traits>
 #include <algorithm>
+#include <iterator>
+#include <span>
 #include <initializer_list>
 
 #include "arm_math.h"
@@ -25,6 +27,22 @@ template<typename Type, std::size_t row, std::size_t col>
 class ArmMatrix
 {
 public:
+    template<typename U, std::size_t R, std::size_t C>
+        requires std::is_arithmetic_v<U>
+    friend class ArmMatrix;
+
+    using ValueType = Type;
+
+    static constexpr std::size_t rows() noexcept
+    {
+        return row;
+    }
+
+    static constexpr std::size_t cols() noexcept
+    {
+        return col;
+    }
+
     constexpr ArmMatrix() noexcept
     {
         ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
@@ -36,43 +54,29 @@ public:
         ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
     }
 
-    explicit constexpr ArmMatrix(const MatrixBase type) noexcept
+    constexpr ArmMatrix& operator=(const ArmMatrix& other) noexcept
     {
-        if constexpr (row == col) {
-            switch (type) {
-            case MatrixBase::E:
-                for (std::size_t i = 0; i < row; ++i) {
-                    data_[i * col + i] = static_cast<Type>(1);
-                }
-                break;
-            case MatrixBase::One:
-                std::ranges::fill(data_, static_cast<Type>(1));
-                break;
-            default:
-                break;
-            }
+        if (this != &other) {
+            std::ranges::copy(other.data_, data_);
         }
-        else {
-            switch (type) {
-            case MatrixBase::One:
-                std::ranges::fill(data_, static_cast<Type>(1));
-                break;
-            default:
-                break;
-            }
-        }
+        return *this;
+    }
+
+    explicit constexpr ArmMatrix(const SpecialMatrixTag tag) noexcept
+    {
+        initSpecialMatrix(std::span{data_, std::size(data_)}, row, col, tag);
         ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
     }
 
     explicit constexpr ArmMatrix(const Type (&mat_data)[row * col]) noexcept
     {
-        std::ranges::copy(mat_data.data_, data_);
+        std::ranges::copy(mat_data, data_);
         ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
     }
 
     explicit constexpr ArmMatrix(const Type (&mat_data)[row][col]) noexcept
     {
-        std::ranges::copy(mat_data.data_, data_);
+        std::ranges::copy(std::addressof(mat_data[0][0]), std::addressof(mat_data[row - 1][col - 1]) + 1, data_);
         ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
     }
 
@@ -80,6 +84,12 @@ public:
     {
         std::ranges::copy(mat_data, data_);
         ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
+    }
+
+    constexpr ArmMatrix& operator=(std::initializer_list<Type> mat_data) noexcept
+    {
+        std::ranges::copy(mat_data, data_);
+        return *this;
     }
 
     constexpr ArmMatrix(std::initializer_list<std::initializer_list<Type>> mat_data) noexcept
@@ -91,6 +101,15 @@ public:
         ArmMatrixTraits<Type>::init(&matrix_, row, col, data_);
     }
 
+    constexpr ArmMatrix& operator=(std::initializer_list<std::initializer_list<Type>> mat_data) noexcept
+    {
+        auto* dst = data_;
+        for (const auto& row_data : mat_data) {
+            dst = std::ranges::copy(row_data, dst).out;
+        }
+        return *this;
+    }
+
     [[nodiscard]] constexpr Type* at(std::size_t r, std::size_t c) noexcept
     {
         if (r >= row || c >= col) {
@@ -98,20 +117,21 @@ public:
         }
         return &data_[r * col + c];
     }
-
     [[nodiscard]] constexpr const Type* at(std::size_t r, std::size_t c) const noexcept
     {
-        return const_cast<ArmMatrix*>(this)->at(r, c);
+        if (r >= row || c >= col) {
+            return nullptr;
+        }
+        return &data_[r * col + c];
     }
 
     [[nodiscard]] constexpr Type& operator()(std::size_t r, std::size_t c) noexcept
     {
         return data_[r * col + c];
     }
-
     [[nodiscard]] constexpr const Type& operator()(std::size_t r, std::size_t c) const noexcept
     {
-        return const_cast<ArmMatrix*>(this)->operator()(r, c);
+        return data_[r * col + c];
     }
 
     [[nodiscard]] constexpr Type det() const noexcept
@@ -141,37 +161,14 @@ public:
         std::ranges::fill(data_, Type{});
     }
 
-    constexpr ArmMatrix& operator=(const ArmMatrix& other) noexcept
-    {
-        if (this != &other) {
-            std::ranges::copy(other.data_, data_);
-        }
-        return *this;
-    }
-
-    constexpr ArmMatrix& operator=(std::initializer_list<Type> mat_data) noexcept
-    {
-        std::ranges::copy(mat_data, data_);
-        return *this;
-    }
-
-    constexpr ArmMatrix& operator=(std::initializer_list<std::initializer_list<Type>> mat_data) noexcept
-    {
-        auto* dst = data_;
-        for (const auto& row_data : mat_data) {
-            dst = std::ranges::copy(row_data, dst).out;
-        }
-        return *this;
-    }
-
     [[nodiscard]] constexpr bool operator==(const ArmMatrix& other) const noexcept
     {
-        return std::ranges::equal(other.data_, data_, [](Type a, Type b) noexcept { return weakEqu(a, b); });
+        return std::ranges::equal(other.data_, data_);
     }
 
     [[nodiscard]] constexpr bool isApprox(const ArmMatrix& other, Type error) const noexcept
     {
-        return std::ranges::equal(other.data_, data_, [error](Type a, Type b) noexcept {
+        return std::ranges::equal(other.data_, data_, [error](Type a, Type b) noexcept -> bool {
             return weakEqu(a, b, error);
         });
     }
@@ -238,11 +235,19 @@ public:
         return result;
     }
 
+    [[nodiscard]] friend ArmMatrix operator*(Type scalar, const ArmMatrix& mat) noexcept
+    {
+        ArmMatrix result;
+        ArmMatrixTraits<Type>::scale(&mat.matrix_, scalar, &result.matrix_);
+        return result;
+    }
+
     template<std::size_t col2>
-    [[nodiscard]] ArmMatrix<Type, row, col2> operator*(const ArmMatrix<Type, col, col2>& other) const noexcept
+    [[nodiscard]] friend ArmMatrix<Type, row, col2> operator*(const ArmMatrix& lhs,
+                                                              const ArmMatrix<Type, col, col2>& rhs) noexcept
     {
         ArmMatrix<Type, row, col2> result;
-        ArmMatrixTraits<Type>::mult(&matrix_, &other.matrix_, &result.matrix_);
+        ArmMatrixTraits<Type>::mult(&lhs.matrix_, &rhs.matrix_, &result.matrix_);
         return result;
     }
 
@@ -261,13 +266,6 @@ public:
         return result;
     }
 
-    [[nodiscard]] friend ArmMatrix operator*(Type scalar, const ArmMatrix& mat) noexcept
-    {
-        ArmMatrix result;
-        ArmMatrixTraits<Type>::scale(&mat.matrix_, scalar, &result.matrix_);
-        return result;
-    }
-
     [[nodiscard]] friend ArmMatrix operator/(Type scalar, const ArmMatrix& mat) noexcept
         requires SquareMatrix<row, col>
     {
@@ -283,11 +281,19 @@ public:
         return result;
     }
 
+    void transposeInPlace() noexcept
+        requires SquareMatrix<row, col>
+    {
+        ArmMatrix temp = *this;
+        ArmMatrixTraits<Type>::trans(&temp.matrix_, &matrix_);
+    }
+
     [[nodiscard]] ArmMatrix inverse() const noexcept
         requires SquareMatrix<row, col>
     {
         ArmMatrix result;
-        ArmMatrixTraits<Type>::inverse(&matrix_, &result.matrix_);
+        ArmMatrix copy = *this;
+        ArmMatrixTraits<Type>::inverse(&copy.matrix_, &result.matrix_);
         return result;
     }
 

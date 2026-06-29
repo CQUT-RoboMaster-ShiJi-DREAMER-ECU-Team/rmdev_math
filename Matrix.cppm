@@ -10,7 +10,7 @@ module;
 export module rmdev.matrix;
 
 export namespace rmdev {
-using ::rmdev::MatrixBase;
+using ::rmdev::SpecialMatrixTag;
 using ::rmdev::MatrixCouldMultiplied;
 using ::rmdev::SquareMatrix;
 }  // namespace rmdev
