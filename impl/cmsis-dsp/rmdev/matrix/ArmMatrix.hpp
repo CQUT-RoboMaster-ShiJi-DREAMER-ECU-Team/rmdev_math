@@ -17,6 +17,10 @@
 
 #include "arm_math.h"
 
+#include "emdevif/core/fatal_handler.h"
+
+#include "emdevif/core/error_handler.hpp"
+
 #include "rmdev/matrix/matrix_base.hpp"
 #include "rmdev/math.hpp"
 #include "ArmMatrixTraits.hpp"
@@ -128,10 +132,12 @@ public:
 
     [[nodiscard]] constexpr Type& operator()(std::size_t r, std::size_t c) noexcept
     {
+        EMDEVIF_ASSERT(r < row && c < col, "Matrix index out of bounds");
         return data_[r * col + c];
     }
     [[nodiscard]] constexpr const Type& operator()(std::size_t r, std::size_t c) const noexcept
     {
+        EMDEVIF_ASSERT(r < row && c < col, "Matrix index out of bounds");
         return data_[r * col + c];
     }
 
@@ -243,11 +249,10 @@ public:
     }
 
     template<std::size_t col2>
-    [[nodiscard]] friend ArmMatrix<Type, row, col2> operator*(const ArmMatrix& lhs,
-                                                              const ArmMatrix<Type, col, col2>& rhs) noexcept
+    [[nodiscard]] ArmMatrix<Type, row, col2> operator*(const ArmMatrix<Type, col, col2>& rhs) noexcept
     {
         ArmMatrix<Type, row, col2> result;
-        ArmMatrixTraits<Type>::mult(&lhs.matrix_, &rhs.matrix_, &result.matrix_);
+        ArmMatrixTraits<Type>::mult(&matrix_, &rhs.matrix_, &result.matrix_);
         return result;
     }
 
@@ -295,6 +300,13 @@ public:
         ArmMatrix copy = *this;
         ArmMatrixTraits<Type>::inverse(&copy.matrix_, &result.matrix_);
         return result;
+    }
+
+    void inverseInPlace() noexcept
+        requires SquareMatrix<row, col>
+    {
+        ArmMatrix copy = *this;
+        ArmMatrixTraits<Type>::inverse(&copy.matrix_, &matrix_);
     }
 
 private:
